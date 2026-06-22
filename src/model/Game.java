@@ -10,6 +10,9 @@ public class Game {
     private LocalDateTime lastBackup;
     private String lastHash;
 
+    public Game() {
+    }
+
     public Game(String name, String gamePath, String saveGamePath) {
         this.name = name;
         this.GamePath = gamePath;
