@@ -3,6 +3,12 @@ package model;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
+/*
+    VAI SER RESPOSÁVEL POR LIDAR COM OS DADOS DO PROJETO
+    AINDA SEM IMPLEMENTAÇÃO DE HASH ENTÃO ELE ESTA COMO NULL POR ENQUANTO.
+*/
+
 public class Game {
     private String name;
     private String GamePath;
@@ -17,7 +23,8 @@ public class Game {
         this.name = name;
         this.GamePath = gamePath;
         this.SaveGamePath = saveGamePath;
-        lastBackup = LocalDateTime.now();
+        lastBackup = LocalDateTime.now(); //EU DEVERIA UTILIZAR O FORMATTER MAS POR ENQUANTO TA CRUE SEM FORMATAÇÃO
+                                          //AINDA VOU LIDAR COM ISSO COM UM TODO
     }
 
     public String getName() {

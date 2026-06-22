@@ -8,7 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
+/*
+    IMPLEMENTAÇÃO BEM BASICA DE JSON APENAS ESCREVENDO EM UM ARQUIVO
+    AINDA PRECISO PENSAR EM COMO ESTRUTURAR, POR ENQUANTO ESTA APENAS ALGO PRIMITIVO PARA TESTE
+    DE FUNCIONAMENTO.
+ */
 public class GameRepository {
     public void GameData(List<Game> GamesInfos){
         try {
