@@ -1,13 +1,17 @@
 import model.Game;
 import service.GameRepository;
+import service.HashFileSave;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args){
-        List<Game> g = new ArrayList<>();
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+        /*List<Game> g = new ArrayList<>();
         for (int i = 0; i < 2; i++){
             Scanner sc = new Scanner(System.in);
             System.out.print("Insira o nome do jogo: ");
@@ -28,7 +32,10 @@ public class App {
 
         GameRepository gp = new GameRepository();
 
-        gp.GameData(g);
+        gp.GameData(g);*/
+        Path filePath = Paths.get("/home/marcospc/Imagens/Screenshots");
+        HashFileSave hfs = new HashFileSave();
+        hfs.SaveFileHash(filePath);
 
 
 
