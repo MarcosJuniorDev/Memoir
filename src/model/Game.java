@@ -20,12 +20,12 @@ public class Game {
     public Game() {
     }
 
-    public Game(String name, String gamePath, String saveGamePath) {
+    public Game(String name, String gamePath, String saveGamePath, String lastHash) {
         this.name = name;
         this.GamePath = gamePath;
         this.SaveGamePath = saveGamePath;
-        lastBackup = LocalDateTime.now(); //EU DEVERIA UTILIZAR O FORMATTER MAS POR ENQUANTO TA CRUE SEM FORMATAÇÃO
-                                          //AINDA VOU LIDAR COM ISSO COM UM TODO
+        lastBackup = LocalDateTime.now(); //EU DEVERIA UTILIZAR O FORMATTER MAS POR ENQUANTO TA CRUE SEM FORMATAÇÃO AINDA VOU LIDAR COM ISSO COM UM TODO
+        this.lastHash = lastHash;
     }
 
     public String getName() {
@@ -55,6 +55,10 @@ public class Game {
     public String getLastBackup() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return lastBackup.format(formatter);
+    }
+
+    public void setLastBackup() {
+        this.lastBackup = LocalDateTime.now();
     }
 
     public void updateLastBackup(){
