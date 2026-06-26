@@ -61,7 +61,6 @@ public class AddGame extends JDialog {
         footerPanel.add(btnAddGame, "pushx, align right, width 180!, height 40!, gapbottom 30, gapright 10");
         footerPanel.add(btnCancel, "width 120!, height 40!, gapright 20");
 
-
         btnCancel.addActionListener(e -> dispose());
         panel.add(footerPanel, "dock south");
         add(panel);
