@@ -16,26 +16,7 @@ public class AddGame extends JDialog {
         super(parent, "Add new Game", true);
         setUndecorated(true);
 
-        //tentando deixar ela fixa relacionada a tela principal
-        ComponentAdapter lockMovement = new ComponentAdapter() {
-            @Override
-            public void componentMoved(ComponentEvent e){
-                setLocationRelativeTo(parent);
-            }
-        };
-        parent.addComponentListener(lockMovement);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                parent.removeComponentListener(lockMovement);
-            }
-        });
-
-        //Cores para os btn
-        /*Color cyanTheme = new Color(0, 255, 255);
-        Color darkGrey = Color.decode("#2D2F31");
-        Color whiteText = Color.WHITE;
-        Color BlackText = Color.BLACK;*/
+        fixedModal(parent);
 
         //BTN cyan para adicionar
         RoundButton btnAddGame = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
@@ -66,4 +47,23 @@ public class AddGame extends JDialog {
         panel.add(footerPanel, "dock south");
         add(panel);
     }
+
+    private void fixedModal(JFrame parent){
+        //tentando deixar ela fixa relacionada a tela principal
+        ComponentAdapter lockMovement = new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e){
+                setLocationRelativeTo(parent);
+            }
+        };
+        parent.addComponentListener(lockMovement);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                parent.removeComponentListener(lockMovement);
+            }
+        });
+    }
+
+
 }
