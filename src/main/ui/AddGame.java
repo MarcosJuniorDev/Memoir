@@ -1,5 +1,6 @@
 package main.ui;
 
+import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
 
@@ -31,22 +32,22 @@ public class AddGame extends JDialog {
         });
 
         //Cores para os btn
-        Color cyanTheme = new Color(0, 255, 255);
+        /*Color cyanTheme = new Color(0, 255, 255);
         Color darkGrey = Color.decode("#2D2F31");
         Color whiteText = Color.WHITE;
-        Color BlackText = Color.BLACK;
+        Color BlackText = Color.BLACK;*/
 
         //BTN cyan para adicionar
-        RoundButton btnAddGame = new RoundButton("ADD GAME", cyanTheme, BlackText, 15);
+        RoundButton btnAddGame = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
 
         //BTN Cinza para SAIR
-        RoundButton btnCancel = new RoundButton("CANCEL", darkGrey, whiteText, 15);
+        RoundButton btnCancel = new RoundButton("CANCEL", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
 
 
         setSize(1000, 740);
         setLocationRelativeTo(parent);
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 20"));
-        panel.setBackground(Color.decode("#1A1C1E"));
+        panel.setBackground(AppTheme.BG_MODAL.getColor());
 
         //Title Popup
         JLabel lblTitle = new JLabel("New Game");

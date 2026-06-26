@@ -1,5 +1,6 @@
 package main.ui;
 
+import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
 
@@ -23,7 +24,7 @@ public class MainScreen extends JFrame {
         lblTitle.setForeground(Color.WHITE);
         panel.add(lblTitle);
         //button
-        RoundButton rb = new RoundButton("ADD GAME", new Color(0, 255, 255), Color.BLACK, 44, 20);
+        RoundButton rb = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK,44, 20);
         rb.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
         panel.add(rb, "pushx, align right, wrap, gapright 20");
         add(panel);
