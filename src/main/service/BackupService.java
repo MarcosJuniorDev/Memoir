@@ -1,6 +1,6 @@
-package service;
+package main.service;
 
-import model.Game;
+import main.model.Game;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;

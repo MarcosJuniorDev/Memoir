@@ -1,19 +1,24 @@
-import model.Game;
-import service.BackupService;
-import service.GameRepository;
-import service.HashFileSave;
+package main;
 
+import main.ui.MainScreen;
+
+import javax.swing.*;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
+        SwingUtilities.invokeLater(() -> {
+            MainScreen ms = new MainScreen();
+            ms.setVisible(true);
+        });
+
+
+
+
+
+
+
         /*List<Game> g = new ArrayList<>();
         for (int i = 0; i < 2; i++){
             Scanner sc = new Scanner(System.in);
@@ -40,7 +45,7 @@ public class App {
         HashFileSave hfs = new HashFileSave();
         hfs.SaveFileHash(filePath);*/
         // 1. Pastas dentro do projeto
-        Path projectRoot = Paths.get("").toAbsolutePath();
+        /*Path projectRoot = Paths.get("").toAbsolutePath();
         Path backupBasePath = projectRoot.resolve("test-backups");
         Path saveTestPath = projectRoot.resolve("test-saves");
         Path repoFilePath = projectRoot.resolve("test-games.json");
@@ -108,7 +113,7 @@ public class App {
 
         System.out.println("\nBackups criados em: " + backupBasePath.toAbsolutePath());
         System.out.println("JSON salvo em: " + repoFilePath.toAbsolutePath());
-        System.out.println("Saves de teste em: " + saveTestPath.toAbsolutePath());
+        System.out.println("Saves de teste em: " + saveTestPath.toAbsolutePath());*/
 
 
 

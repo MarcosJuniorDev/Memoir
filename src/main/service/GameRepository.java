@@ -1,9 +1,9 @@
-package service;
+package main.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import model.Game;
+import main.model.Game;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
