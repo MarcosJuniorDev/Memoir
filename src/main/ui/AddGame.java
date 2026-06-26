@@ -1,5 +1,6 @@
 package main.ui;
 
+import main.ui.components.RoundTextField;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
@@ -30,12 +31,6 @@ public class AddGame extends JDialog {
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 20"));
         panel.setBackground(AppTheme.BG_MODAL.getColor());
 
-        //Title Popup
-        JLabel lblTitle = new JLabel("New Game");
-        lblTitle.setFont(new Font("Open Sans", Font.BOLD, 16));
-        lblTitle.setForeground(Color.WHITE);
-        panel.add(lblTitle, "dock north");
-
         //COLOCAR ESSAS PORRA DE BOTAO NO CANTO INFERIOR DIREITO
         JPanel footerPanel = new JPanel(new MigLayout("insets 0"));
         footerPanel.setOpaque(false);
@@ -46,6 +41,47 @@ public class AddGame extends JDialog {
         btnCancel.addActionListener(e -> dispose());
         panel.add(footerPanel, "dock south");
         add(panel);
+
+        //TODO REFATORAR ESSA PORRA PRA NAO FICAR ESSA MERDA EXTENSA E REPETITIVA
+        //CAMPO NOME
+        //Label
+        JLabel lblGameTitle = new JLabel("Game Title");
+        lblGameTitle.setForeground(AppTheme.PRIMARY.getColor());
+        lblGameTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        // CAMPO DO TEXTO
+        RoundTextField txtGameTitle = new RoundTextField(15, 16);
+        panel.add(lblGameTitle,"align right, gaptop 15, gapbottom 5,width 60%!, wrap, north, gapright 10 ");
+        panel.add(txtGameTitle, "align right,gaptop 10, width 60%!, height 40!, gapbottom 20, north, gapright 10");
+
+
+        //CAMPO CAMINHO EXECUTAVEL
+        //Label
+        JLabel lblGameExec = new JLabel("Select Executable");
+        lblGameExec.setForeground(AppTheme.PRIMARY.getColor());
+        lblGameExec.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        panel.add(lblGameExec, "align right, gaptop 15, gapbottom 5,width 60%!, wrap, north, gapright 10 ");
+
+        RoundTextField txtGameExec = new RoundTextField(15, 16);
+        panel.add(txtGameExec, "align right,gaptop 10, width 60%!, height 40!, gapbottom 20, north, gapright 10");
+
+        //CAMPO CAMINHO DO SAVE FILE
+        JLabel lblSaveFolder = new JLabel("Save Folder");
+        lblSaveFolder.setForeground((AppTheme.PRIMARY.getColor()));
+        lblSaveFolder.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        panel.add(lblSaveFolder, "align right, gaptop 15, gapbottom 5,width 60%!, wrap, north, gapright 10 ");
+
+        RoundTextField txtSaveFolder = new RoundTextField(15, 16);
+        panel.add(txtSaveFolder, "align right,gaptop 10, width 60%!, height 40!, gapbottom 20, north, gapright 10");
+
+        //DIR ONDE O BACKUP VAI FICAR
+        JLabel lblBackupDir = new JLabel("BACKUP LOCATION");
+        lblBackupDir.setForeground(AppTheme.PRIMARY.getColor());
+        lblBackupDir.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        panel.add(lblBackupDir, "align right, gaptop 15, gapbottom 5,width 60%!, wrap, north, gapright 10 ");
+
+        RoundTextField txtBackupDir = new RoundTextField(15, 16);
+        panel.add(txtBackupDir, "align right,gaptop 10, width 60%!, height 40!, gapbottom 20, north, gapright 10");
+
     }
 
     private void fixedModal(JFrame parent){
