@@ -7,11 +7,9 @@ import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class AddGame extends JDialog {
     public AddGame(JFrame parent){
@@ -44,9 +42,15 @@ public class AddGame extends JDialog {
         formPanel.setOpaque(false);
 
         RoundTextField txtGameTitle = createFormField(formPanel, "Game Title");
+
         RoundTextField txtGameExec = createFormField(formPanel, "Select Executable");
+        dirChoose(txtGameExec, false);
+
         RoundTextField txtSaveFolder = createFormField(formPanel, "Save Folder");
-        RoundTextField txtBackupDir  = createFormField(formPanel, "BACKUP LOCATION");
+        dirChoose(txtSaveFolder, true);
+
+        RoundTextField txtBackupDir  = createFormField(formPanel, "Backup Location");
+        dirChoose(txtBackupDir, true);
 
         // Adiciona o formulário inteiro na segunda coluna do contentPanel
         contentPanel.add(formPanel, "growx, aligny top");
@@ -96,6 +100,33 @@ public class AddGame extends JDialog {
         parentPanel.add(txt, "width 100%, height 40!");
 
         return txt; // Devolvemos o campo para você poder pegar o texto (.getText()) na hora de salvar o jogo
+    }
+
+    private void dirChoose(RoundTextField field, boolean isDirectory){
+        field.setEditable(false);
+        field.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        field.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                if (isDirectory){
+                    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    chooser.setDialogTitle("Select Folder");
+                }
+                else {
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setDialogTitle("Select Executable");
+                    chooser.setFileFilter(new FileNameExtensionFilter("Executables (*.exe)", "exe"));
+                }
+                int result = chooser.showOpenDialog(AddGame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    String selectedPath = chooser.getSelectedFile().getAbsolutePath();
+                    field.setText(selectedPath);
+                }
+            }
+        });
     }
 
 

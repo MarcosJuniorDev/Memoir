@@ -13,12 +13,7 @@ public class App {
             ms.setVisible(true);
         });
 
-
-
-
-
-
-
+        //inserção manual para teste CLI
         /*List<Game> g = new ArrayList<>();
         for (int i = 0; i < 2; i++){
             Scanner sc = new Scanner(System.in);
