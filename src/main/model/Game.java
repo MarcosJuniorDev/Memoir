@@ -12,21 +12,23 @@ import java.time.format.DateTimeFormatter;
 
 public class Game {
     private String name;
-    private String GamePath;
-    private String SaveGamePath;
+    private String gamePath;
+    private String saveGamePath;
     private LocalDateTime lastBackup = null;
-    private String lastHash;
+    private String lastHash = null;
     private String backupLocation;
+    private String coverPath;
 
     public Game() {
     }
 
-    public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation) {
+    public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation, String coverPath) {
         this.name = name;
-        this.GamePath = gamePath;
-        this.SaveGamePath = saveGamePath;
+        this.gamePath = gamePath;
+        this.saveGamePath = saveGamePath;
         this.lastHash = lastHash;
         this.backupLocation = backupLocation;
+        this.coverPath = coverPath;
     }
 
     public String getName() {
@@ -38,19 +40,19 @@ public class Game {
     }
 
     public String getGamePath() {
-        return GamePath;
+        return gamePath;
     }
 
     public void setGamePath(String gamePath) {
-        GamePath = gamePath;
+        this.gamePath = gamePath;
     }
 
     public String getSaveGamePath() {
-        return SaveGamePath;
+        return saveGamePath;
     }
 
     public void setSaveGamePath(String saveGamePath) {
-        SaveGamePath = saveGamePath;
+        this.saveGamePath = saveGamePath;
     }
 
     public String getLastBackup() {

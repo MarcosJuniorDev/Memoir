@@ -1,5 +1,7 @@
 package main.ui;
 
+import main.model.Game;
+import main.service.GameRepository;
 import main.service.SteamGridService;
 import main.ui.components.CoverPick;
 import main.ui.components.RoundTextField;
@@ -11,8 +13,17 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddGame extends JDialog {
+
+    CoverPick coverpic = new CoverPick(15, "+ ADD COVER");
+    private String savedCoverPath = "";
+    private GameRepository gameRepository = new GameRepository();
+
+
     public AddGame(JFrame parent){
         super(parent, "Add new Game", true);
         setUndecorated(true);
@@ -35,7 +46,6 @@ public class AddGame extends JDialog {
         JPanel contentPanel = new JPanel(new MigLayout("insets 0, fillx", "[][grow]"));
         contentPanel.setOpaque(false);
         //COLUNA A ESQUERDA
-        CoverPick coverpic = new CoverPick(15, "+ ADD COVER");
         contentPanel.add(coverpic, "width 240!, height 340!, aligny top, gapright 40");
 
 
@@ -75,13 +85,52 @@ public class AddGame extends JDialog {
         footerPanel.setOpaque(false);
 
         footerPanel.add(btnAddGame, "pushx, align right, width 180!, height 40!, gapbottom 30, gapright 10");
-        footerPanel.add(btnCancel, "width 120!, height 40!, gapright 20");
+        btnAddGame.addActionListener(e -> {
+            saveGameProcess(gameRepository, txtGameTitle.getText(), txtGameExec.getText(), txtSaveFolder.getText(), txtBackupDir.getText());
+        });
 
+        footerPanel.add(btnCancel, "width 120!, height 40!, gapright 20");
         btnCancel.addActionListener(e -> dispose());
+
         panel.add(footerPanel, "dock south");
         add(panel);
+
+
     }
 
+    private void saveGameProcess(GameRepository gameRepository, String gameTitle, String gameExec, String saveFolder, String backupDir){
+        if(gameTitle.isEmpty() || gameExec.isEmpty() || saveFolder.isEmpty() || backupDir.isEmpty()){
+            JOptionPane.showMessageDialog(this,
+                    "Please fill in all fields before saving.",
+                    "Missing Information",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        List<Game> savedGames = gameRepository.loadAll();
+        if (savedGames == null){
+            savedGames = new ArrayList<>();
+        }
+        for (Game g : savedGames){
+            if(g.getName().equalsIgnoreCase(gameTitle)){
+                JOptionPane.showMessageDialog(this,
+                        "A game with the anem '" + gameTitle + "' is already registered!",
+                        "Duplicate Game",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        Game newGame = new Game(gameTitle, gameExec, saveFolder, null, backupDir, savedCoverPath);
+
+        savedGames.add(newGame);
+        gameRepository.saveAll(savedGames);
+
+        JOptionPane.showMessageDialog(this,
+                gameTitle + " has been successfully added to your library!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
+
+    }
 
 
     private void fixedModal(JFrame parent){
@@ -157,7 +206,7 @@ public class AddGame extends JDialog {
                     String coverPath = steamGridService.getCover(idGame, gameName);
                     if (coverPath != null) {
                         System.out.println("Cover saved in : " + coverPath);
-
+                        savedCoverPath = coverPath;
                         SwingUtilities.invokeLater(() -> {
                             coverPick.setCoverImage(coverPath);
                         });
