@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLOutput;
 
 public class AddGame extends JDialog {
     public AddGame(JFrame parent){
