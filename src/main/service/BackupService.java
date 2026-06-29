@@ -10,24 +10,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class BackupService {
-    private String dirToSave;
     private Game game;
     private HashFileSave hashFileSave = new HashFileSave();
     private GameRepository gameRepository = new GameRepository();
 
-    public BackupService(String dirToSave, Game game, HashFileSave hashFileSave, GameRepository gameRepository) {
-        this.dirToSave = dirToSave;
+    public BackupService(Game game, HashFileSave hashFileSave, GameRepository gameRepository) {
         this.game = game;
         this.hashFileSave = hashFileSave;
         this.gameRepository = gameRepository;
-    }
-
-    public String getDirToSave() {
-        return dirToSave;
-    }
-
-    public void setDirToSave(String dirToSave) {
-        this.dirToSave = dirToSave;
     }
 
     public Game getGame() {
@@ -55,8 +45,8 @@ public class BackupService {
     }
 
     public void ensureBackupDirecotry()throws IOException, NoSuchAlgorithmException {
-        if (!Files.exists(Paths.get(dirToSave, game.getName()))){
-            Files.createDirectories(Paths.get(dirToSave, game.getName()));
+        if (!Files.exists(Paths.get(game.getBackupLocation(), game.getName()))){
+            Files.createDirectories(Paths.get(game.getBackupLocation(), game.getName()));
         }
     }
 
@@ -75,7 +65,7 @@ public class BackupService {
             String currentHash = verifyCurrentHash();
             if (isBackupNeeded(currentHash)){
                 ensureBackupDirecotry();
-                FileUtils.copyDirectory(Paths.get(game.getSaveGamePath()).toFile(), Paths.get(dirToSave, game.getName()).toFile());
+                FileUtils.copyDirectory(Paths.get(game.getSaveGamePath()).toFile(), Paths.get(game.getBackupLocation(), game.getName()).toFile());
                 game.setLastHash(currentHash);
                 game.setLastBackup();
                 gameRepository.saveAll(allGames);
@@ -84,10 +74,4 @@ public class BackupService {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
 }

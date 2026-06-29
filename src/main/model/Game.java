@@ -14,18 +14,19 @@ public class Game {
     private String name;
     private String GamePath;
     private String SaveGamePath;
-    private LocalDateTime lastBackup;
+    private LocalDateTime lastBackup = null;
     private String lastHash;
+    private String backupLocation;
 
     public Game() {
     }
 
-    public Game(String name, String gamePath, String saveGamePath, String lastHash) {
+    public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation) {
         this.name = name;
         this.GamePath = gamePath;
         this.SaveGamePath = saveGamePath;
-        lastBackup = LocalDateTime.now(); //EU DEVERIA UTILIZAR O FORMATTER MAS POR ENQUANTO TA CRUE SEM FORMATAÇÃO AINDA VOU LIDAR COM ISSO COM UM TODO
         this.lastHash = lastHash;
+        this.backupLocation = backupLocation;
     }
 
     public String getName() {
@@ -71,5 +72,13 @@ public class Game {
 
     public void setLastHash(String lastHash) {
         this.lastHash = lastHash;
+    }
+
+    public String getBackupLocation() {
+        return backupLocation;
+    }
+
+    public void setBackupLocation(String backupLocation) {
+        this.backupLocation = backupLocation;
     }
 }
