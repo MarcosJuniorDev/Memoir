@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 /*
@@ -17,7 +18,10 @@ import java.util.List;
     DE FUNCIONAMENTO.
  */
 public class GameRepository {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter().nullSafe()).create();
+
     public void saveAll(List<Game> GamesInfos){
         try {
             String GameDataJson = gson.toJson(GamesInfos);
