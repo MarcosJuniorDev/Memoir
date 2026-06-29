@@ -105,7 +105,6 @@ public class SteamGridService {
     }
 
     private String coverDownload(String urlString, String fileName) throws Exception {
-        System.out.println("ENTROU no COVERDOWNLOAD??????");
         Path folderLocation = Paths.get("data", "covers");
         try {
             Files.createDirectories(folderLocation);
