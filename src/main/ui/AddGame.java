@@ -1,5 +1,6 @@
 package main.ui;
 
+import main.service.SteamGridService;
 import main.ui.components.CoverPick;
 import main.ui.components.RoundTextField;
 import main.ui.theme.AppTheme;
@@ -10,6 +11,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLOutput;
 
 public class AddGame extends JDialog {
     public AddGame(JFrame parent){
@@ -20,7 +22,7 @@ public class AddGame extends JDialog {
         setLocationRelativeTo(parent);
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 30"));
         panel.setBackground(AppTheme.BG_MODAL.getColor());
-
+        SteamGridService steamGridService = new SteamGridService();
 
 
         //BTN cyan para adicionar
@@ -37,11 +39,22 @@ public class AddGame extends JDialog {
         CoverPick coverpic = new CoverPick(15, "+ ADD COVER");
         contentPanel.add(coverpic, "width 240!, height 340!, aligny top, gapright 40");
 
+
+
         // COLUNA DIREITA
         JPanel formPanel = new JPanel(new MigLayout("wrap 1, fillx, insets 0"));
         formPanel.setOpaque(false);
 
         RoundTextField txtGameTitle = createFormField(formPanel, "Game Title");
+
+        //FOTO COVER
+        //NAO FACO IDEIA SE ISSO TA DECENTE DENTRO DO CONSTRUTOR TALVES MUDAR ISSO NO FUTURO
+        coverpic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                findCover(steamGridService, txtGameTitle.getText(), coverpic);
+            }
+        });
 
         RoundTextField txtGameExec = createFormField(formPanel, "Select Executable");
         dirChoose(txtGameExec, false);
@@ -69,6 +82,8 @@ public class AddGame extends JDialog {
         panel.add(footerPanel, "dock south");
         add(panel);
     }
+
+
 
     private void fixedModal(JFrame parent){
         //tentando deixar ela fixa relacionada a tela principal
@@ -99,7 +114,7 @@ public class AddGame extends JDialog {
         // "width 100%": preenche exatamente o limite do formPanel
         parentPanel.add(txt, "width 100%, height 40!");
 
-        return txt; // Devolvemos o campo para você poder pegar o texto (.getText()) na hora de salvar o jogo
+        return txt;
     }
 
     private void dirChoose(RoundTextField field, boolean isDirectory){
@@ -127,6 +142,35 @@ public class AddGame extends JDialog {
                 }
             }
         });
+    }
+
+    public void findCover(SteamGridService steamGridService, String gameName, CoverPick coverPick){
+        if (gameName == null || gameName.trim().isEmpty()){
+            System.out.println("Nome vazio!");
+            return;
+        }
+        //USO De THREAD PARA NÃO TRAVAR O PROGRAMA ENQUANTO PROCURA FOTO
+        new Thread(() -> {
+            try {
+                //TODO REFATORAR ESSA MERDA DEPOIS TALVEZ COM UM IF PREVENTIVO
+                String idGame = steamGridService.findIdGame(gameName);
+                if (idGame != null) {
+                    String coverPath = steamGridService.getCover(idGame, gameName);
+                    if (coverPath != null) {
+                        System.out.println("Cover saved in : " + coverPath);
+
+                        SwingUtilities.invokeLater(() -> {
+                            coverPick.setCoverImage(coverPath);
+                        });
+                    }
+                }
+                else {
+                    System.out.println("Game no found in SteamGridDB");
+                }
+            } catch (Exception e){
+                System.out.println("Error while search for cover: " + e.getMessage());
+            }
+        }).start();
     }
 
 

@@ -33,3 +33,5 @@ bin/
 ### Games data ###
 gameData.json
 
+src/main/resources/config.properties
+
