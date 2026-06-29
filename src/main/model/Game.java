@@ -84,4 +84,12 @@ public class Game {
     public void setBackupLocation(String backupLocation) {
         this.backupLocation = backupLocation;
     }
+
+    public String getCoverPath() {
+        return coverPath;
+    }
+
+    public void setCoverPath(String coverPath) {
+        this.coverPath = coverPath;
+    }
 }

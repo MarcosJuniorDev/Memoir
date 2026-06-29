@@ -13,6 +13,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +132,7 @@ public class AddGame extends JDialog {
                 JOptionPane.INFORMATION_MESSAGE);
         this.dispose();
 
+
     }
 
 
@@ -192,11 +195,35 @@ public class AddGame extends JDialog {
         });
     }
 
+    public String checkLocalCover(String gameName){
+        String formattedName = gameName.replace(" ", "-");
+
+        File folder = new File("data/covers");
+
+        if (folder.exists() && folder.isDirectory()){
+            File[] files = folder.listFiles((dir, name) -> name.startsWith(formattedName + "."));
+
+            if (files != null && files.length > 0) {
+                return files[0].getPath();
+            }
+        }
+        return null;
+    }
+
     public void findCover(SteamGridService steamGridService, String gameName, CoverPick coverPick){
         if (gameName == null || gameName.trim().isEmpty()){
             System.out.println("Nome vazio!");
             return;
         }
+
+        String localPath = checkLocalCover(gameName);
+        if (localPath != null) {
+            System.out.println("Capa encontrada localmente: " + localPath);
+            this.savedCoverPath = localPath;
+            coverPick.setCoverImage(localPath);
+            return;
+        }
+
         //USO De THREAD PARA NÃO TRAVAR O PROGRAMA ENQUANTO PROCURA FOTO
         new Thread(() -> {
             try {

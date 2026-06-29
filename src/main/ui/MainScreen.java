@@ -1,5 +1,7 @@
 package main.ui;
 
+import main.model.Game;
+import main.service.GameRepository;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
@@ -7,9 +9,30 @@ import main.ui.components.RoundButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
 
 public class MainScreen extends JFrame {
+    private JPanel gridPanel;
+    private GameRepository gameRepository;
+
     public MainScreen(){
+        this.gameRepository = new GameRepository();
+
+        //PAINEL DOS CARDS
+        gridPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 20, 20));
+        gridPanel.setBackground(AppTheme.BG_MAIN.getColor());
+
+
+
+        JScrollPane scrollPane = new JScrollPane(gridPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(null);
+        add(scrollPane, BorderLayout.CENTER);
+
+
+
+
+
         setTitle("Memoir");
         setSize(1560, 960);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,16 +50,38 @@ public class MainScreen extends JFrame {
         RoundButton rb = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK,44, 20);
         rb.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
         panel.add(rb, "pushx, align right, wrap, gapright 20");
-        add(panel);
+        add(panel, BorderLayout.NORTH);
 
         //ADD GAME Panel
         rb.addActionListener(e -> {
             AddGame ad = new AddGame(MainScreen.this);
+            ad.setModal(true);
             ad.setVisible(true);
+            loadgamesToGrid();
         });
+
+        loadgamesToGrid();
 
     }
 
-    //Metodo para importar a fonte do projeto
+    public void loadgamesToGrid(){
+        gridPanel.removeAll();
+
+        List<Game> savedGames = gameRepository.loadAll();
+
+        if (savedGames != null && !savedGames.isEmpty()) {
+            for (Game game : savedGames){
+                GameCard card = new GameCard(game, clickedGame -> {
+                    System.out.println("Abrindo Painel de backup: " + clickedGame.getName());
+                });
+                gridPanel.add(card);
+            }
+        }
+
+        gridPanel.revalidate();
+        gridPanel.repaint();
+    }
+
+
 
 }
