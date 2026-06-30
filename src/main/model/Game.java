@@ -1,6 +1,5 @@
 package main.model;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,12 +15,9 @@ public class Game {
     private String gamePath;
     private String saveGamePath;
     private LocalDateTime lastBackup = null;
-    private String lastHash = null;
+    private String lastHash;
     private String backupLocation;
     private String coverPath;
-
-    public Game() {
-    }
 
     public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation, String coverPath) {
         this.name = name;
