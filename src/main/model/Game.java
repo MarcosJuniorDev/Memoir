@@ -53,6 +53,9 @@ public class Game {
     }
 
     public String getLastBackup() {
+        if (this.lastBackup == null) {
+            return "no backup yet";
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return lastBackup.format(formatter);
     }

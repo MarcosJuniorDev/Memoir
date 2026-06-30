@@ -30,19 +30,46 @@ public class InfoGameScreen extends JPanel {
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 30"));
         panel.setBackground(AppTheme.BG_MAIN.getColor());
 
-        JPanel contentPanel = new JPanel(new MigLayout("insets 0, fillx, filly", "[50%][50%]"));
+        JPanel contentPanel = new JPanel(new MigLayout("insets 0, fillx, filly", "[35%][65%]"));
         contentPanel.setOpaque(false);
-
-
-        //IMAGEM DO GAME
-        ResponsiveCover gameCover = new ResponsiveCover(game.getCoverPath());
-        contentPanel.add(gameCover, "grow, wmin 0, hmin 0");
 
         //Nome do Game
         JLabel gameName = new JLabel(game.getName());
         gameName.setForeground(AppTheme.PRIMARY.getColor());
         gameName.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
         contentPanel.add(gameName, "top, center");
+
+        //AVALIACAO
+        JLabel rating = new JLabel("Rating: ");
+        rating.setForeground(AppTheme.PRIMARY.getColor());
+        rating.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 16));
+        contentPanel.add(rating, "center, cell 0 1");
+
+        //IMAGEM DO GAME
+        ResponsiveCover gameCover = new ResponsiveCover(game.getCoverPath());
+        contentPanel.add(gameCover, "grow, pushy, wmin 0, hmin 0,  cell 0 2");
+
+        //ULTIMO BACKUP:
+        JLabel gameLastBackupTitle = new JLabel("Last backup: ");
+        gameLastBackupTitle.setForeground(AppTheme.PRIMARY.getColor());
+        gameLastBackupTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
+        contentPanel.add(gameLastBackupTitle, "center, cell 0 3");
+
+        JLabel backupDate = new JLabel(game.getLastBackup());
+        backupDate.setForeground(AppTheme.PRIMARY.getColor());
+        backupDate.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
+        contentPanel.add(backupDate, "center, cell 0 3");
+
+        //BOTAO PARA REALIZAR BACKUP
+
+        RoundButton btnBackupGame = new RoundButton("BACKUP NOW", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
+        btnBackupGame.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        contentPanel.add(btnBackupGame, "center, gaptop 30, cell 0 4");
+
+
+
+
+
 
 
 
