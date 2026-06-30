@@ -15,6 +15,9 @@ public class MainScreen extends JFrame {
     private JPanel gridPanel;
     private GameRepository gameRepository;
 
+    //GUARDA A MAINSCREEN ORIGINAL
+    private Container originalPanel;
+
     public MainScreen(){
         this.gameRepository = new GameRepository();
 
@@ -44,7 +47,7 @@ public class MainScreen extends JFrame {
         JLabel lblTitle = new JLabel("Memoir");
         lblTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 70));
         lblTitle.setBorder(new EmptyBorder(0, 10, 10 ,10));
-        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setForeground(AppTheme.PRIMARY.getColor());
         panel.add(lblTitle);
         //button
         RoundButton rb = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK,44, 20);
@@ -61,7 +64,22 @@ public class MainScreen extends JFrame {
         });
 
         loadgamesToGrid();
+        //SALVA TUDO DO MAINSCREEN NO ORIGINAL
+        this.originalPanel = this.getContentPane();
 
+    }
+
+    public void changeScreen(JPanel newScreen){
+        this.setContentPane(newScreen);
+        this.revalidate();
+        this.repaint();
+    }
+
+    public void restoreMainScreenState() {
+        this.setContentPane(originalPanel);
+        loadgamesToGrid();
+        this.revalidate();
+        this.repaint();
     }
 
     public void loadgamesToGrid(){
@@ -73,6 +91,8 @@ public class MainScreen extends JFrame {
             for (Game game : savedGames){
                 GameCard card = new GameCard(game, clickedGame -> {
                     System.out.println("Abrindo Painel de backup: " + clickedGame.getName());
+                    InfoGameScreen infoGameScreen = new InfoGameScreen(MainScreen.this, game);
+                    changeScreen(infoGameScreen);
                 });
                 gridPanel.add(card);
             }

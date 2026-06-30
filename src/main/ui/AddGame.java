@@ -160,7 +160,6 @@ public class AddGame extends JDialog {
 
         // Cria e adiciona o TextField
         RoundTextField txt = new RoundTextField(15, 16);
-        // "width 100%": preenche exatamente o limite do formPanel
         parentPanel.add(txt, "width 100%, height 40!");
 
         return txt;
