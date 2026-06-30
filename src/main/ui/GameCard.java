@@ -1,11 +1,13 @@
 package main.ui;
 
 import main.model.Game;
+import main.ui.theme.AppTheme;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.function.Consumer;
 
@@ -19,7 +21,7 @@ public class GameCard extends JPanel {
         this.gameName = game.getName();
 
 
-        setPreferredSize(new Dimension(150, 250));
+        setPreferredSize(new Dimension(200, 300));
         setOpaque(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -51,11 +53,16 @@ public class GameCard extends JPanel {
             g2d.fill(molde);
         }
 
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Open Sans", Font.BOLD, 12));
+        g2d.setColor(AppTheme.PRIMARY.getColor());
+        g2d.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 18));
         FontMetrics fm = g2d.getFontMetrics();
+
+        //BORDA
+        g2d.setStroke(new BasicStroke(2f));
+        g2d.draw(molde);
+
         int xTexto = (getWidth() - fm.stringWidth(gameName)) / 2;
-        int yTexto = getHeight() - 10;
+        int yTexto = getHeight() - 12;
 
         g2d.drawString(gameName, xTexto, yTexto);
         g2d.dispose();
