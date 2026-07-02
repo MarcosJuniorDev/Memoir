@@ -47,4 +47,16 @@ public class GameRepository {
             return new ArrayList<>();
         }
     }
+
+    public void update(Game updatedGame) {
+        List<Game> allGames = loadAll();
+
+        for (int i = 0; i < allGames.size(); i++) {
+            if (allGames.get(i).getName().equals(updatedGame.getName())){
+                allGames.set(i, updatedGame);
+            }
+        }
+
+        saveAll(allGames);
+    }
 }

@@ -9,6 +9,8 @@ import main.ui.components.RoundButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MainScreen extends JFrame {
@@ -38,6 +40,7 @@ public class MainScreen extends JFrame {
 
         setTitle("Memoir");
         setSize(1560, 960);
+        setMinimumSize(new java.awt.Dimension(1024, 768));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel(new MigLayout("wrap 2"));
@@ -86,7 +89,8 @@ public class MainScreen extends JFrame {
         gridPanel.removeAll();
 
         List<Game> savedGames = gameRepository.loadAll();
-
+        //REVERTER A LISTA PARA OS CARD APARECER DA DIREITA PARA ESQUERDA
+        Collections.reverse(savedGames);
         if (savedGames != null && !savedGames.isEmpty()) {
             for (Game game : savedGames){
                 GameCard card = new GameCard(game, clickedGame -> {

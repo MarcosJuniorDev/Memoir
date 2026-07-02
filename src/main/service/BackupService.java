@@ -14,10 +14,8 @@ public class BackupService {
     private HashFileSave hashFileSave = new HashFileSave();
     private GameRepository gameRepository = new GameRepository();
 
-    public BackupService(Game game, HashFileSave hashFileSave, GameRepository gameRepository) {
+    public BackupService(Game game) {
         this.game = game;
-        this.hashFileSave = hashFileSave;
-        this.gameRepository = gameRepository;
     }
 
     public Game getGame() {
@@ -60,18 +58,16 @@ public class BackupService {
         return !currentHash.equals(lasthash);
     }
 
-    public void saveFilesBackup(List<Game> allGames){
-        try{
-            String currentHash = verifyCurrentHash();
-            if (isBackupNeeded(currentHash)){
-                ensureBackupDirecotry();
-                FileUtils.copyDirectory(Paths.get(game.getSaveGamePath()).toFile(), Paths.get(game.getBackupLocation(), game.getName()).toFile());
-                game.setLastHash(currentHash);
-                game.setLastBackup();
-                gameRepository.saveAll(allGames);
-            }
-        }catch (IOException | NoSuchAlgorithmException e){
-            e.printStackTrace();
+    public boolean saveFilesBackup() throws Exception{
+        String currentHash = verifyCurrentHash();
+        if (isBackupNeeded(currentHash)) {
+            ensureBackupDirecotry();
+            FileUtils.copyDirectory(Paths.get(game.getSaveGamePath()).toFile(), Paths.get(game.getBackupLocation(), game.getName()).toFile());
+            game.setLastHash(currentHash);
+            game.setLastBackup();
+            gameRepository.update(game);
+            return true;
         }
+        return false;
     }
 }

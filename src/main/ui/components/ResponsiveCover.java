@@ -35,7 +35,7 @@ public class ResponsiveCover extends JPanel {
             g2d.drawImage(coverImage, 0, 0, getWidth(), getHeight(), this);
             g2d.setClip(null);
 
-            g2d.setStroke(new BasicStroke(2f));
+            g2d.setStroke(new BasicStroke(4f));
             g2d.draw(molde);
 
             g2d.dispose();

@@ -1,9 +1,11 @@
 package main.ui;
 
 import main.model.Game;
+import main.service.BackupService;
 import main.ui.components.CoverPick;
 import main.ui.components.ResponsiveCover;
 import main.ui.components.RoundButton;
+import main.ui.components.RoundTextField;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 
@@ -15,7 +17,9 @@ public class InfoGameScreen extends JPanel {
     private MainScreen mainScreen;
     private CoverPick coverPick;
     private Image coverImage;
-
+    /*
+        TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
+     */
 
     public InfoGameScreen(MainScreen mainScreen, Game game){
 
@@ -33,38 +37,123 @@ public class InfoGameScreen extends JPanel {
         JPanel contentPanel = new JPanel(new MigLayout("insets 0, fillx, filly", "[35%][65%]"));
         contentPanel.setOpaque(false);
 
+        //TENTAIVA DE PAINEL ESQUERDO SEPARADO
+        JPanel leftPanel = new JPanel(new MigLayout("wrap 1, insets 0, fill", "[grow]", "[][][grow][][]"));
+        leftPanel.setOpaque(false);
+        //DIREITO
+        JPanel rightPanel = new JPanel(new MigLayout("wrap 1, insets 20, fillx", "[grow]"));
+        rightPanel.setOpaque(false);
+
+
+
         //Nome do Game
         JLabel gameName = new JLabel(game.getName());
         gameName.setForeground(AppTheme.PRIMARY.getColor());
         gameName.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
-        contentPanel.add(gameName, "top, center");
+        leftPanel.add(gameName, "top, center");
 
         //AVALIACAO
         JLabel rating = new JLabel("Rating: ");
         rating.setForeground(AppTheme.PRIMARY.getColor());
         rating.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 16));
-        contentPanel.add(rating, "center, cell 0 1");
+        leftPanel.add(rating, "center, cell 0 1");
 
         //IMAGEM DO GAME
         ResponsiveCover gameCover = new ResponsiveCover(game.getCoverPath());
-        contentPanel.add(gameCover, "grow, pushy, wmin 0, hmin 0,  cell 0 2");
+        leftPanel.add(gameCover, "grow, pushx, pushy, wmin 0, hmin 0,  cell 0 2");
 
         //ULTIMO BACKUP:
         JLabel gameLastBackupTitle = new JLabel("Last backup: ");
         gameLastBackupTitle.setForeground(AppTheme.PRIMARY.getColor());
         gameLastBackupTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
-        contentPanel.add(gameLastBackupTitle, "center, cell 0 3");
+        leftPanel.add(gameLastBackupTitle, "center, cell 0 3");
 
         JLabel backupDate = new JLabel(game.getLastBackup());
         backupDate.setForeground(AppTheme.PRIMARY.getColor());
         backupDate.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
-        contentPanel.add(backupDate, "center, cell 0 3");
+        leftPanel.add(backupDate, "center, cell 0 3");
 
         //BOTAO PARA REALIZAR BACKUP
 
         RoundButton btnBackupGame = new RoundButton("BACKUP NOW", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
         btnBackupGame.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
-        contentPanel.add(btnBackupGame, "center, gaptop 30, cell 0 4");
+        leftPanel.add(btnBackupGame, "center, gaptop 30, cell 0 4");
+        contentPanel.add(leftPanel, "grow, cell 0 0");
+
+        btnBackupGame.addActionListener(e -> {
+            try {
+                BackupService backupService = new BackupService(game);
+                boolean backupDone = backupService.saveFilesBackup();
+                if(backupDone){
+                    backupDate.setText(game.getLastBackup());
+                    JOptionPane.showMessageDialog(
+                            this, "Backup Completed successfully!",
+                            "Success", JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+                else{
+                    JOptionPane.showMessageDialog(
+                            this, "No new changes detected. Your backup is up to date!",
+                            "Backup Skipped", JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(
+                        this, "Failed to backup save files:\n" + ex.getMessage(),
+                        "Backup Error", JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+        });
+
+        //RESTORE BACKUP
+        RoundButton btnRestoreGameSave = new RoundButton("RESTORE BACKUP", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
+        btnRestoreGameSave.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        //contentPanel.add(btnRestoreGameSave, " gaptop 30, cell 0 4");
+
+        //LADO DIREITO
+        //TITULO: CAMINHO DO JOGO
+        JLabel gamePathTitle = new JLabel("Game Path");
+        gamePathTitle.setForeground(AppTheme.PRIMARY.getColor());
+        gamePathTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        rightPanel.add(gamePathTitle, "left, top");
+
+        //CONTEUDO DO CAMINHO DO JOGO
+        RoundTextField gamePath = new RoundTextField(15, 20);
+        gamePath.setForeground(AppTheme.PRIMARY.getColor());
+        gamePath.setText(game.getGamePath());
+        gamePath.setEditable(false);
+        rightPanel.add(gamePath, "width 100%, height 50!");
+
+        //TITULO: CAMINHO PARA O SAVEFILE
+        JLabel gameSavePathTitle = new JLabel("Save File Path");
+        gameSavePathTitle.setForeground(AppTheme.PRIMARY.getColor());
+        gameSavePathTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        rightPanel.add(gameSavePathTitle, "left, gaptop 20");
+
+        //CONTEUDO
+        RoundTextField gameSavePath = new RoundTextField(15, 20);
+        gameSavePath.setForeground(AppTheme.PRIMARY.getColor());
+        gameSavePath.setText(game.getSaveGamePath());
+        gameSavePath.setEditable(false);
+        rightPanel.add(gameSavePath, "width 100%, height 50!");
+
+        //TITULO:CAMINHO DO BACKUP
+        JLabel gameBackupPathTitle = new JLabel("Backup Path");
+        gameBackupPathTitle.setForeground(AppTheme.PRIMARY.getColor());
+        gameBackupPathTitle.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        rightPanel.add(gameBackupPathTitle, "left, gaptop 20");
+        //CONTEUDO
+        RoundTextField gameBackupPath = new RoundTextField(15, 20);
+        gameBackupPath.setForeground(AppTheme.PRIMARY.getColor());
+        gameBackupPath.setText(game.getSaveGamePath());
+        gameBackupPath.setEditable(false);
+        rightPanel.add(gameBackupPath, "width 100%, height 50!");
+
+
+        contentPanel.add(rightPanel, "grow, top, cell 1 0");
+
 
 
 
@@ -100,6 +189,9 @@ public class InfoGameScreen extends JPanel {
         // Adiciona o panel no CENTRO do BorderLayout para ele esticar
         add(panel, BorderLayout.CENTER);
     }
+
+
+
 
 
 }
