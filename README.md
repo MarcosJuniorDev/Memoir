@@ -24,4 +24,3 @@ Implementações pro futuro:
 ----
 BUGS PARA CORREÇÃO:
 
-- Nome muito longo invadindo espaço dos outros card no grid da MainScreen 
