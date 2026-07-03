@@ -59,4 +59,13 @@ public class GameRepository {
 
         saveAll(allGames);
     }
+
+    public void deleteGame(String gameName){
+        List<Game> allGames = loadAll();
+
+        allGames.removeIf(game -> game.getName().equals(gameName));
+
+        saveAll(allGames);
+
+    }
 }

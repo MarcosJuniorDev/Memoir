@@ -2,6 +2,7 @@ package main.ui;
 
 import main.model.Game;
 import main.service.BackupService;
+import main.service.GameRepository;
 import main.ui.components.CoverPick;
 import main.ui.components.ResponsiveCover;
 import main.ui.components.RoundButton;
@@ -29,7 +30,7 @@ public class InfoGameScreen extends JPanel {
 
 
         //BOTOES
-        RoundButton btnCancel = new RoundButton("CANCEL", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
+
 
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 30"));
         panel.setBackground(AppTheme.BG_MAIN.getColor());
@@ -177,21 +178,45 @@ public class InfoGameScreen extends JPanel {
 
 
         //FOOTER
+        //VOLTAR A TELA ANTERIOR
+        RoundButton btnCancel = new RoundButton("CANCEL", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
         JPanel footerPanel = new JPanel(new MigLayout());
         footerPanel.setOpaque(false);
-        footerPanel.add(btnCancel, "align right,pushx, width 120!, height 40!, gapbottom 30, gapright 10");
+
+
+        //DELETAR CADASTRO DO GAME
+        RoundButton btnDeleteGame = new RoundButton("DELETE GAME", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
+        btnDeleteGame.addActionListener(e -> {
+            GameRepository gameRepository = new GameRepository();
+            try {
+                gameRepository.deleteGame(game.getName());
+                JOptionPane.showMessageDialog(this,
+                        "Game Profile deleted!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                mainScreen.restoreMainScreenState();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(
+                        this, "Failed to delete game profile:\n" + ex.getMessage(),
+                        "Delete Error", JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+
+
+
+        footerPanel.add(btnDeleteGame, "align right, pushx, width 140!, height 40!");
+        footerPanel.add(btnCancel, " width 120!, height 40!, gapbottom 30, gapright 10");
+
         panel.add(footerPanel, "dock south");
 
         btnCancel.addActionListener(e -> mainScreen.restoreMainScreenState());
+
+        //
 
 
 
         // Adiciona o panel no CENTRO do BorderLayout para ele esticar
         add(panel, BorderLayout.CENTER);
     }
-
-
-
-
 
 }

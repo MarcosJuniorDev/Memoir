@@ -6,7 +6,6 @@ TODO:
 
 Implementações para versão atual:
 
-- Botão delete do cadastro do game
 - verificar se o usuário quer deletar o backup do save junto com o cadastro do game
 - botão do restore backup
 - edição de caminho na tela de informações do game
