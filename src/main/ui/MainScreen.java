@@ -9,7 +9,6 @@ import main.ui.components.RoundButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,7 +90,7 @@ public class MainScreen extends JFrame {
         List<Game> savedGames = gameRepository.loadAll();
         //REVERTER A LISTA PARA OS CARD APARECER DA DIREITA PARA ESQUERDA
         Collections.reverse(savedGames);
-        if (savedGames != null && !savedGames.isEmpty()) {
+        if (!savedGames.isEmpty()) {
             for (Game game : savedGames){
                 GameCard card = new GameCard(game, clickedGame -> {
                     System.out.println("Abrindo Painel de backup: " + clickedGame.getName());

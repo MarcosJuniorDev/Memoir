@@ -38,8 +38,7 @@ public class GameRepository {
 
     public List<Game> loadAll(){
         try (FileReader fr = new FileReader("gameData.json")){
-            List<Game> gameToLoad = gson.fromJson(fr, new TypeToken<List<Game>>(){}.getType());
-            return gameToLoad;
+            return gson.fromJson(fr, new TypeToken<List<Game>>(){}.getType());
         } catch (FileNotFoundException e){
             return new ArrayList<>();
         } catch (IOException e){

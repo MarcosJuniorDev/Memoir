@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.function.Consumer;
 
@@ -67,7 +66,7 @@ public class GameCard extends JPanel {
         int maxWidth = getWidth() - 10;
 
         if (fm.stringWidth(gameName) > maxWidth){
-            while (fm.stringWidth(gameName + "...") > maxWidth && gameName.length() > 0) {
+            while (fm.stringWidth(gameName + "...") > maxWidth && !gameName.isEmpty()) {
                 gameName = gameName.substring(0, gameName.length() - 1);
             }
             gameName += "...";

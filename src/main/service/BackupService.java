@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 public class BackupService {
     private Game game;
@@ -42,7 +41,7 @@ public class BackupService {
         this.gameRepository = gameRepository;
     }
 
-    public void ensureBackupDirecotry()throws IOException, NoSuchAlgorithmException {
+    public void ensureBackupDirecotry()throws IOException {
         if (!Files.exists(Paths.get(game.getBackupLocation(), game.getName()))){
             Files.createDirectories(Paths.get(game.getBackupLocation(), game.getName()));
         }

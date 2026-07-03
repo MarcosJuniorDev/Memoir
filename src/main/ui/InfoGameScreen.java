@@ -3,7 +3,6 @@ package main.ui;
 import main.model.Game;
 import main.service.BackupService;
 import main.service.GameRepository;
-import main.ui.components.CoverPick;
 import main.ui.components.ResponsiveCover;
 import main.ui.components.RoundButton;
 import main.ui.components.RoundTextField;
@@ -12,12 +11,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 
 public class InfoGameScreen extends JPanel {
-    private MainScreen mainScreen;
-    private CoverPick coverPick;
-    private Image coverImage;
     /*
         TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
      */
@@ -148,30 +143,12 @@ public class InfoGameScreen extends JPanel {
         //CONTEUDO
         RoundTextField gameBackupPath = new RoundTextField(15, 20);
         gameBackupPath.setForeground(AppTheme.PRIMARY.getColor());
-        gameBackupPath.setText(game.getSaveGamePath());
+        gameBackupPath.setText(game.getBackupLocation());
         gameBackupPath.setEditable(false);
         rightPanel.add(gameBackupPath, "width 100%, height 50!");
 
 
         contentPanel.add(rightPanel, "grow, top, cell 1 0");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*JLabel lblDireita = new JLabel("LADO DIREITO (Opções de Backup)", SwingConstants.CENTER);
-        lblDireita.setOpaque(true);
-        lblDireita.setBackground(Color.decode("#4C4CFF")); // Azul*/
 
         panel.add(contentPanel, "grow, push");
 
