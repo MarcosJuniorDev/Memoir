@@ -9,6 +9,7 @@ import main.ui.components.RoundButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +26,15 @@ public class MainScreen extends JFrame {
         //PAINEL DOS CARDS
         gridPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 20, 20));
         gridPanel.setBackground(AppTheme.BG_MAIN.getColor());
-
+        //ICON
+        URL iconURL = getClass().getResource("/icons/memoir_V3C.png");
+        if(iconURL != null){
+            ImageIcon appIcon = new ImageIcon(iconURL);
+            setIconImage(appIcon.getImage());
+        }
+        else {
+            System.out.println("Erro: Icone não encontrado!");
+        }
 
 
         JScrollPane scrollPane = new JScrollPane(gridPanel);
