@@ -24,6 +24,9 @@ public class GameCard extends JPanel {
         setPreferredSize(new Dimension(200, 300));
         setOpaque(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setToolTipText("<html><body style='width: 200px; font-size: 14px; padding: 5px;'>"
+                + gameName
+                + "</body></html>");
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -60,6 +63,15 @@ public class GameCard extends JPanel {
         //BORDA
         g2d.setStroke(new BasicStroke(2f));
         g2d.draw(molde);
+
+        int maxWidth = getWidth() - 10;
+
+        if (fm.stringWidth(gameName) > maxWidth){
+            while (fm.stringWidth(gameName + "...") > maxWidth && gameName.length() > 0) {
+                gameName = gameName.substring(0, gameName.length() - 1);
+            }
+            gameName += "...";
+        }
 
         int xTexto = (getWidth() - fm.stringWidth(gameName)) / 2;
         int yTexto = getHeight() - 12;

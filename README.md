@@ -25,5 +25,3 @@ Implementações pro futuro:
 BUGS PARA CORREÇÃO:
 
 - Nome muito longo invadindo espaço dos outros card no grid da MainScreen 
-- Se eu deletar a pasta de save do backup ele continua com a data do ultimo backup atualizada e se eu der backup now ele
-e vai dizer que o backup esta atualizado pois ele vai comparar o hash do jSON com o da save do game.
