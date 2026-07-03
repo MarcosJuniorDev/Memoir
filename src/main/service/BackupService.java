@@ -54,6 +54,9 @@ public class BackupService {
     }
 
     public boolean isBackupNeeded(String currentHash){
+        if (!Files.exists(Paths.get(game.getBackupLocation(), game.getName()))){
+            return true;
+        }
         String lasthash = game.getLastHash();
         return !currentHash.equals(lasthash);
     }
