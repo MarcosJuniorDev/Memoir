@@ -3,6 +3,7 @@ package main.service;
 import main.model.Game;
 import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,6 +46,10 @@ public class BackupService {
         if (!Files.exists(Paths.get(game.getBackupLocation(), game.getName()))){
             Files.createDirectories(Paths.get(game.getBackupLocation(), game.getName()));
         }
+    }
+
+    public void deleteBackupFile(String backupPath, String folderName) throws IOException{
+        FileUtils.deleteDirectory(new File(backupPath, folderName));
     }
 
 

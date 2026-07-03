@@ -11,14 +11,18 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class InfoGameScreen extends JPanel {
+    private MainScreen mainScreen;
+    private BackupService backupService;
     /*
         TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
      */
 
     public InfoGameScreen(MainScreen mainScreen, Game game){
-
+        this.mainScreen = mainScreen;
+        this.backupService = new BackupService(game);
 
         setLayout(new BorderLayout());
         setBackground(AppTheme.BG_MAIN.getColor());
@@ -78,7 +82,6 @@ public class InfoGameScreen extends JPanel {
 
         btnBackupGame.addActionListener(e -> {
             try {
-                BackupService backupService = new BackupService(game);
                 boolean backupDone = backupService.saveFilesBackup();
                 if(backupDone){
                     backupDate.setText(game.getLastBackup());
@@ -165,18 +168,25 @@ public class InfoGameScreen extends JPanel {
         RoundButton btnDeleteGame = new RoundButton("DELETE GAME", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
         btnDeleteGame.addActionListener(e -> {
             GameRepository gameRepository = new GameRepository();
-            try {
-                gameRepository.deleteGame(game.getName());
-                JOptionPane.showMessageDialog(this,
-                        "Game Profile deleted!",
-                        "Success", JOptionPane.INFORMATION_MESSAGE);
-                mainScreen.restoreMainScreenState();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                        this, "Failed to delete game profile:\n" + ex.getMessage(),
-                        "Delete Error", JOptionPane.INFORMATION_MESSAGE
-                );
+            int awnser = JOptionPane.showConfirmDialog(
+                    this, "Do you also want to delete the backup save file?",
+                    "Backup Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+            );
+            if(awnser == JOptionPane.YES_OPTION) {
+                try {
+                    backupService.deleteBackupFile(game.getBackupLocation(), game.getName());
+                    deleteGameProfile(game.getName(), gameRepository);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage(),
+                            "Error", JOptionPane.WARNING_MESSAGE
+                    );
+                }
+
             }
+            else if (awnser == JOptionPane.NO_OPTION){
+                deleteGameProfile(game.getName(), gameRepository);
+            }
+
         });
 
 
@@ -194,6 +204,21 @@ public class InfoGameScreen extends JPanel {
 
         // Adiciona o panel no CENTRO do BorderLayout para ele esticar
         add(panel, BorderLayout.CENTER);
+    }
+
+    private void deleteGameProfile(String gameName, GameRepository gameRepository){
+        try {
+            gameRepository.deleteGame(gameName);
+            JOptionPane.showMessageDialog(this,
+                    "Game Profile deleted!",
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
+            mainScreen.restoreMainScreenState();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    this, "Failed to delete game profile:\n" + ex.getMessage(),
+                    "Delete Error", JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
 
 }
