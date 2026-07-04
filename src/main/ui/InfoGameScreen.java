@@ -61,8 +61,11 @@ public class InfoGameScreen extends JPanel {
         //AVALIACAO
         JLabel rating = new JLabel("Rating: ");
         rating.setForeground(AppTheme.PRIMARY.getColor());
-        rating.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 16));
-        leftPanel.add(rating, "center, cell 0 1");
+        rating.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 18));
+        JPanel starRatingPanel = createStarRating();
+        System.out.println(game.getRating());
+        leftPanel.add(rating, "split 2, center, cell 0 1");
+        leftPanel.add(starRatingPanel, "");
 
         //IMAGEM DO GAME
         ResponsiveCover gameCover = new ResponsiveCover(game.getCoverPath());
@@ -190,14 +193,24 @@ public class InfoGameScreen extends JPanel {
         rightPanel.add(gameBackupPath, "width 100%, height 50!");
 
         //COMENTARIO
+        //TITULO
         JLabel commentGame = new JLabel("Comments");
         commentGame.setForeground(AppTheme.PRIMARY.getColor());
         commentGame.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
         rightPanel.add(commentGame, "left, gaptop 20");
+        //CAIXA DE TEXTO
         RoundTextArea commentTxt = new RoundTextArea(15, 20);
         commentTxt.setForeground(AppTheme.PRIMARY.getColor());
         commentTxt.setText(game.getComment());
-        rightPanel.add(commentTxt, "width 100%, height 30%");
+        //SCROLL
+        JScrollPane scrollPane = new JScrollPane(commentTxt);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightPanel.add(scrollPane, "width 0:100%, height 30%");
+        //BOTAOSAVE
         RoundButton btnSaveComment = new RoundButton("Save Comment", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
         btnSaveComment.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 15));
         btnSaveComment.addActionListener(e -> {
@@ -269,6 +282,64 @@ public class InfoGameScreen extends JPanel {
 
         // Adiciona o panel no CENTRO do BorderLayout para ele esticar
         add(panel, BorderLayout.CENTER);
+    }
+
+    private void updateStarsUI (JLabel[] stars, int score){
+        String filledStar = "\u2605"; // ★
+        String emptyStar = "\u2606";  // ☆
+        for (int i = 0; i < 5; i++){
+            if (i < score){
+                stars[i].setText(filledStar);
+            }
+            else {
+                stars[i].setText(emptyStar);
+            }
+        }
+    }
+
+    private JPanel createStarRating() {
+        JPanel starPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        starPanel.setOpaque(false);
+
+        JLabel[] stars = new JLabel[5];
+        Font startFont = new Font(Font.SANS_SERIF, Font.PLAIN, 20);
+
+        // Loop para criar sempre 5 estrelas
+        for (int i = 0; i < 5; i++) {
+            final int startValue = i + 1;
+
+            stars[i] = new JLabel();
+            stars[i].setFont(startFont);
+            stars[i].setForeground(AppTheme.PRIMARY.getColor());
+            stars[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            //ADICIONAR OS EVENTOS DO MOUSE
+            stars[i].addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    game.setRating(startValue);
+
+                    GameRepository gr = new GameRepository();
+                    gr.update(game);
+
+                    updateStarsUI(stars, game.getRating());
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e){
+                    updateStarsUI(stars, startValue);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e){
+                    updateStarsUI(stars, game.getRating());
+                }
+            });
+            starPanel.add(stars[i]);
+        }
+        updateStarsUI(stars, game.getRating());
+
+        return starPanel;
     }
 
 

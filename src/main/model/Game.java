@@ -19,6 +19,7 @@ public class Game {
     private String backupLocation;
     private String coverPath;
     private String comment = "";
+    private int rating;
 
     public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation, String coverPath) {
         this.name = name;
@@ -27,6 +28,14 @@ public class Game {
         this.lastHash = lastHash;
         this.backupLocation = backupLocation;
         this.coverPath = coverPath;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public String getName() {
