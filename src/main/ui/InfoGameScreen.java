@@ -5,6 +5,7 @@ import main.service.BackupService;
 import main.service.GameRepository;
 import main.ui.components.ResponsiveCover;
 import main.ui.components.RoundButton;
+import main.ui.components.RoundTextArea;
 import main.ui.components.RoundTextField;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
@@ -188,6 +189,31 @@ public class InfoGameScreen extends JPanel {
         dirChoose(gameBackupPath, true, newPath -> game.setGamePath(newPath));
         rightPanel.add(gameBackupPath, "width 100%, height 50!");
 
+        //COMENTARIO
+        JLabel commentGame = new JLabel("Comments");
+        commentGame.setForeground(AppTheme.PRIMARY.getColor());
+        commentGame.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        rightPanel.add(commentGame, "left, gaptop 20");
+        RoundTextArea commentTxt = new RoundTextArea(15, 20);
+        commentTxt.setForeground(AppTheme.PRIMARY.getColor());
+        commentTxt.setText(game.getComment());
+        rightPanel.add(commentTxt, "width 100%, height 30%");
+        RoundButton btnSaveComment = new RoundButton("Save Comment", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
+        btnSaveComment.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 15));
+        btnSaveComment.addActionListener(e -> {
+            int awnser = JOptionPane.showConfirmDialog(
+                    this, "Do you want to save a comment?",
+                    "Comment", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+            );
+            if(awnser == JOptionPane.YES_OPTION){
+                GameRepository gameRepository = new GameRepository();
+                game.setComment(commentTxt.getText());
+                gameRepository.update(game);
+            }
+
+
+        });
+        rightPanel.add(btnSaveComment, "gaptop 10, right");
 
         contentPanel.add(rightPanel, "grow, top, cell 1 0");
         panel.add(contentPanel, "grow, push");
@@ -244,6 +270,8 @@ public class InfoGameScreen extends JPanel {
         // Adiciona o panel no CENTRO do BorderLayout para ele esticar
         add(panel, BorderLayout.CENTER);
     }
+
+
 
     private void deleteGameProfile(String gameName, GameRepository gameRepository){
         try {

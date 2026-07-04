@@ -5,10 +5,7 @@ Inicialmente backup local e futuramente talvez via api para algum drive em cloud
 TODO:
 
 Implementações para versão atual:
-
-- edição de caminho na tela de informações do game
 - sistema de estrelas para nota do jogo
-- opção de comentário sobre o jogo(talvez tenho que refatorar o modal Game)
 ----------
 Implementações pro futuro: 
 
