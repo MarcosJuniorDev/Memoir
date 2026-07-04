@@ -119,6 +119,34 @@ public class InfoGameScreen extends JPanel {
 
         });
 
+        btnRestoreGameSave.addActionListener(e -> {
+            int awnser = JOptionPane.showConfirmDialog(
+                    this, "Do you want to restore backup? This option can't be undone!",
+                    "Restore Backup", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+            );
+            if(awnser == JOptionPane.YES_OPTION){
+                try {
+                    boolean isRestored = backupService.restoreBackup();
+
+                    if(isRestored){
+                        JOptionPane.showMessageDialog(this,
+                                "Backup restored successfully!",
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(this,
+                                "No backup found to restore!",
+                                "Not found", JOptionPane.WARNING_MESSAGE);
+                    }
+                }catch (IOException ex){
+                    JOptionPane.showMessageDialog(this,
+                            "Error while restoring backup:\n" + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        });
+
         //LADO DIREITO
         //TITULO: CAMINHO DO JOGO
         JLabel gamePathTitle = new JLabel("Game Path");

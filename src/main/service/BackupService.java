@@ -65,6 +65,10 @@ public class BackupService {
         return !currentHash.equals(lasthash);
     }
 
+    public boolean gameBackupFolderExist(){
+        return Files.exists(Paths.get(game.getBackupLocation(), game.getName()));
+    }
+
     public boolean saveFilesBackup() throws Exception{
         String currentHash = verifyCurrentHash();
         if (isBackupNeeded(currentHash)) {
@@ -76,5 +80,15 @@ public class BackupService {
             return true;
         }
         return false;
+    }
+
+   public boolean restoreBackup() throws IOException {
+        if (gameBackupFolderExist()){
+            FileUtils.copyDirectory(Paths.get(game.getBackupLocation(), game.getName()).toFile(), Paths.get(game.getSaveGamePath()).toFile());
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
