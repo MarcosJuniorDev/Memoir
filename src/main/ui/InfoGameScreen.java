@@ -10,28 +10,32 @@ import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class InfoGameScreen extends JPanel {
     private MainScreen mainScreen;
     private BackupService backupService;
-    /*
-        TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
-     */
+    private Game game;
+
+    //TODO TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
+    //
+
+
 
     public InfoGameScreen(MainScreen mainScreen, Game game){
         this.mainScreen = mainScreen;
+        this.game = game;
         this.backupService = new BackupService(game);
 
         setLayout(new BorderLayout());
         setBackground(AppTheme.BG_MAIN.getColor());
 
-
-
         //BOTOES
-
-
         JPanel panel = new JPanel(new MigLayout("wrap 1, fill, insets 30"));
         panel.setBackground(AppTheme.BG_MAIN.getColor());
 
@@ -126,7 +130,7 @@ public class InfoGameScreen extends JPanel {
         RoundTextField gamePath = new RoundTextField(15, 20);
         gamePath.setForeground(AppTheme.PRIMARY.getColor());
         gamePath.setText(game.getGamePath());
-        gamePath.setEditable(false);
+        dirChoose(gamePath, false, newPath -> game.setGamePath(newPath));
         rightPanel.add(gamePath, "width 100%, height 50!");
 
         //TITULO: CAMINHO PARA O SAVEFILE
@@ -140,6 +144,7 @@ public class InfoGameScreen extends JPanel {
         gameSavePath.setForeground(AppTheme.PRIMARY.getColor());
         gameSavePath.setText(game.getSaveGamePath());
         gameSavePath.setEditable(false);
+        dirChoose(gameSavePath, true, newPath -> game.setGamePath(newPath));
         rightPanel.add(gameSavePath, "width 100%, height 50!");
 
         //TITULO:CAMINHO DO BACKUP
@@ -152,11 +157,11 @@ public class InfoGameScreen extends JPanel {
         gameBackupPath.setForeground(AppTheme.PRIMARY.getColor());
         gameBackupPath.setText(game.getBackupLocation());
         gameBackupPath.setEditable(false);
+        dirChoose(gameBackupPath, true, newPath -> game.setGamePath(newPath));
         rightPanel.add(gameBackupPath, "width 100%, height 50!");
 
 
         contentPanel.add(rightPanel, "grow, top, cell 1 0");
-
         panel.add(contentPanel, "grow, push");
 
 
@@ -225,6 +230,42 @@ public class InfoGameScreen extends JPanel {
                     "Delete Error", JOptionPane.INFORMATION_MESSAGE
             );
         }
+    }
+
+    private void dirChoose(RoundTextField field, boolean isDirectory, Consumer<String> updateGameField) {
+        field.setEditable(false);
+        field.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        field.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                if (isDirectory){
+                    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    chooser.setDialogTitle("Select Folder");
+                } else {
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setDialogTitle("Select Executable");
+                    chooser.setFileFilter(new FileNameExtensionFilter("Executables (*.exe)", "exe"));
+                }
+
+                int result = chooser.showOpenDialog(InfoGameScreen.this);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    String selectedPath = chooser.getSelectedFile().getAbsolutePath();
+
+                    // 1. Atualiza a tela
+                    field.setText(selectedPath);
+
+                    // 2. MÁGICA: Atualiza o atributo certo dentro do objeto 'game'
+                    updateGameField.accept(selectedPath);
+
+                    // 3. Agora sim, salva o objeto atualizado no JSON!
+                    GameRepository gameRepository = new GameRepository();
+                    gameRepository.update(game);
+                }
+            }
+        });
     }
 
 }

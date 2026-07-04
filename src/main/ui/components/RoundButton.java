@@ -75,7 +75,7 @@ public class RoundButton extends JButton {
 
         g2d.dispose();
 
-        // Chama o método da superclasse para renderizar o texto do botão sobre a forma que desenhamos
+        /* Chama o méto-do da superclasse para renderizar o texto do botão sobre a forma que desenhamos */
         super.paintComponent(g);
     }
     public void hover(){
