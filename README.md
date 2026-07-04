@@ -6,11 +6,9 @@ TODO:
 
 Implementações para versão atual:
 
-- botão do restore backup
 - edição de caminho na tela de informações do game
 - sistema de estrelas para nota do jogo
 - opção de comentário sobre o jogo(talvez tenho que refatorar o modal Game)
-- Fazer um icone para o Aplicativo
 ----------
 Implementações pro futuro: 
 

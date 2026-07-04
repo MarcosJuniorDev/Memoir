@@ -18,6 +18,7 @@ public class Game {
     private String lastHash;
     private String backupLocation;
     private String coverPath;
+    private String comment = "";
 
     public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation, String coverPath) {
         this.name = name;
@@ -90,5 +91,13 @@ public class Game {
 
     public void setCoverPath(String coverPath) {
         this.coverPath = coverPath;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

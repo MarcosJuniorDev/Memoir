@@ -28,6 +28,7 @@ public class InfoGameScreen extends JPanel {
         setBackground(AppTheme.BG_MAIN.getColor());
 
 
+
         //BOTOES
 
 
@@ -73,11 +74,19 @@ public class InfoGameScreen extends JPanel {
         backupDate.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
         leftPanel.add(backupDate, "center, cell 0 3");
 
+        //RESTORE BACKUP
+        RoundButton btnRestoreGameSave = new RoundButton("RESTORE BACKUP", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
+        btnRestoreGameSave.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
+        leftPanel.add(btnRestoreGameSave, "center ,gaptop 5, cell 0 5, sg botoes");
+
         //BOTAO PARA REALIZAR BACKUP
 
         RoundButton btnBackupGame = new RoundButton("BACKUP NOW", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
         btnBackupGame.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
-        leftPanel.add(btnBackupGame, "center, gaptop 30, cell 0 4");
+        leftPanel.add(btnBackupGame, "center, gaptop 10, cell 0 4, sg botoes");
+
+
+
         contentPanel.add(leftPanel, "grow, cell 0 0");
 
         btnBackupGame.addActionListener(e -> {
@@ -105,11 +114,6 @@ public class InfoGameScreen extends JPanel {
             }
 
         });
-
-        //RESTORE BACKUP
-        RoundButton btnRestoreGameSave = new RoundButton("RESTORE BACKUP", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
-        btnRestoreGameSave.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 26));
-        //contentPanel.add(btnRestoreGameSave, " gaptop 30, cell 0 4");
 
         //LADO DIREITO
         //TITULO: CAMINHO DO JOGO
@@ -154,6 +158,8 @@ public class InfoGameScreen extends JPanel {
         contentPanel.add(rightPanel, "grow, top, cell 1 0");
 
         panel.add(contentPanel, "grow, push");
+
+
 
 
 
