@@ -18,9 +18,9 @@ public class ResponsiveCover extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        Graphics2D g2d = (Graphics2D) g.create();
         if (coverImage != null) {
-            Graphics2D g2d = (Graphics2D) g.create();
+
 
             // Filtros para a imagem não ficar serrilhada quando encolher ou esticar
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -39,6 +39,19 @@ public class ResponsiveCover extends JPanel {
             g2d.draw(molde);
 
             g2d.dispose();
+        }
+        else {
+            g2d.setColor(AppTheme.SECONDARY.getColor());
+            g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 15, 15));
+
+            String text = "NO COVER";
+            g2d.setColor(AppTheme.PRIMARY.getColor()); // Texto em Cyan
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 20));
+
+            FontMetrics fm = g2d.getFontMetrics();
+            int xTexto = (getWidth() - fm.stringWidth(text)) / 2;
+            int yTexto = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.drawString(text, xTexto, yTexto);
         }
     }
 }

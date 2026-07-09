@@ -44,6 +44,7 @@ public class GameCard extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        FontMetrics fm = g2d.getFontMetrics();
 
         Shape molde = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight() - 30, 15, 15);
         if (coverImage != null) {
@@ -51,13 +52,19 @@ public class GameCard extends JPanel {
             g2d.drawImage(coverImage, 0, 0, getWidth(), getHeight() - 30, this);
             g2d.setClip(null);
         } else {
-            g2d.setColor(Color.DARK_GRAY);
+            //g2d.setColor(Color.DARK_GRAY);
             g2d.fill(molde);
+            g2d.setColor(AppTheme.PRIMARY.getColor());
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 14));
+            String text = "NO COVER";
+            int xTexto = (getWidth() - fm.stringWidth(text)) / 2;
+            int yTexto = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.drawString(text, xTexto, yTexto);
         }
 
         g2d.setColor(AppTheme.PRIMARY.getColor());
         g2d.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 18));
-        FontMetrics fm = g2d.getFontMetrics();
+
 
         //BORDA
         g2d.setStroke(new BasicStroke(2f));

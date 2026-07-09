@@ -34,7 +34,6 @@ public class AddGame extends JDialog {
         panel.setBackground(AppTheme.BG_MODAL.getColor());
         SteamGridService steamGridService = new SteamGridService();
 
-
         //BTN cyan para adicionar
         RoundButton btnAddGame = new RoundButton("ADD GAME", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
 
@@ -88,6 +87,7 @@ public class AddGame extends JDialog {
         btnAddGame.addActionListener(e -> {
             saveGameProcess(gameRepository, txtGameTitle.getText(), txtGameExec.getText(), txtSaveFolder.getText(), txtBackupDir.getText());
         });
+
 
         footerPanel.add(btnCancel, "width 120!, height 40!, gapright 20");
         btnCancel.addActionListener(e -> dispose());
@@ -209,7 +209,9 @@ public class AddGame extends JDialog {
 
     public void findCover(SteamGridService steamGridService, String gameName, CoverPick coverPick){
         if (gameName == null || gameName.trim().isEmpty()){
-            System.out.println("Nome vazio!");
+            JOptionPane.showMessageDialog(this,
+                    "Game Title field is required.",
+                    "Name field", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -235,12 +237,21 @@ public class AddGame extends JDialog {
                             coverPick.setCoverImage(coverPath);
                         });
                     }
+                    else {
+                        JOptionPane.showMessageDialog(this, "Game not found",
+                                "Game not found", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 else {
                     System.out.println("Game no found in SteamGridDB");
+                    JOptionPane.showMessageDialog(this, "Game not found",
+                            "Game not found", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e){
                 System.out.println("Error while search for cover: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, "Error while searching for cover" +
+                        e.getMessage(),
+                        "Game not found", JOptionPane.ERROR_MESSAGE);
             }
         }).start();
     }
