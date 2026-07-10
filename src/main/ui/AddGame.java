@@ -244,7 +244,7 @@ public class AddGame extends JDialog {
                 }
                 else {
                     System.out.println("Game no found in SteamGridDB");
-                    JOptionPane.showMessageDialog(this, "Game not found",
+                    JOptionPane.showMessageDialog(this, "Cover for game not found",
                             "Game not found", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e){
