@@ -115,7 +115,8 @@ public class SteamGridService {
 
         String extension = urlString.substring(urlString.lastIndexOf("."));
 
-        Path finalFile = folderLocation.resolve(fileName.replace(" ", "-") + extension);
+        Path finalFile = folderLocation.resolve(fileName.replace("[\\\\\\\\/:*?\\\"<>|]", "")
+                .replace(" ", "-") + extension);
 
         try (InputStream  is = URI.create(urlString).toURL().openStream()){
             Files.copy(is, finalFile, StandardCopyOption.REPLACE_EXISTING);

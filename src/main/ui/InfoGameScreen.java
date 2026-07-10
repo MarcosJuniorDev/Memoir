@@ -237,7 +237,7 @@ public class InfoGameScreen extends JPanel {
 
         //FOOTER
         //VOLTAR A TELA ANTERIOR
-        RoundButton btnCancel = new RoundButton("CANCEL", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
+        RoundButton btnCancel = new RoundButton("BACK", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
         JPanel footerPanel = new JPanel(new MigLayout());
         footerPanel.setOpaque(false);
 
