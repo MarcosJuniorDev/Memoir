@@ -48,6 +48,7 @@ public class MainScreen extends JFrame {
 
         setTitle("Memoir");
         setSize(1560, 960);
+        setLocationRelativeTo(null);
         setMinimumSize(new java.awt.Dimension(1024, 768));
         systemTraySetup();
 
