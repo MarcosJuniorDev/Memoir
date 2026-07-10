@@ -1,5 +1,7 @@
 package main.ui;
 
+import dorkbox.systemTray.MenuItem;
+import dorkbox.systemTray.SystemTray;
 import main.model.Game;
 import main.service.GameRepository;
 import main.ui.theme.AppTheme;
@@ -12,6 +14,7 @@ import java.awt.*;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import dorkbox.systemTray.*;
 
 public class MainScreen extends JFrame {
     private JPanel gridPanel;
@@ -43,13 +46,10 @@ public class MainScreen extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
 
 
-
-
-
         setTitle("Memoir");
         setSize(1560, 960);
         setMinimumSize(new java.awt.Dimension(1024, 768));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        systemTraySetup();
 
         JPanel panel = new JPanel(new MigLayout("wrap 2"));
         panel.setBackground(Color.decode("#101213"));
@@ -112,6 +112,28 @@ public class MainScreen extends JFrame {
 
         gridPanel.revalidate();
         gridPanel.repaint();
+    }
+
+    public void systemTraySetup()
+    {
+        SystemTray systemTray = SystemTray.get();
+
+        if (systemTray == null) {
+            System.out.println("System Tray não suportado!");
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+            return;
+        }
+        systemTray.setImage(getClass().getResource("/icons/memoir_V3C.png"));
+
+        systemTray.getMenu().add(new MenuItem("Show", e -> {
+            setVisible(true);
+            setExtendedState(JFrame.NORMAL);
+        }));
+
+        systemTray.getMenu().add(new MenuItem("Exit", e -> {
+            System.exit(0);
+        }));
+
     }
 
 
