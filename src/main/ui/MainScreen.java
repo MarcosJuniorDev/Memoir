@@ -30,7 +30,7 @@ public class MainScreen extends JFrame {
         gridPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 20, 20));
         gridPanel.setBackground(AppTheme.BG_MAIN.getColor());
         //ICON
-        URL iconURL = getClass().getResource("/icons/memoir_V3C.png");
+        URL iconURL = getClass().getResource("/icons/mIcon256.png");
         if(iconURL != null){
             ImageIcon appIcon = new ImageIcon(iconURL);
             setIconImage(appIcon.getImage());
@@ -124,7 +124,7 @@ public class MainScreen extends JFrame {
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             return;
         }
-        systemTray.setImage(getClass().getResource("/icons/memoir_V3C.png"));
+        systemTray.setImage(getClass().getResource("/icons/mIcon256.png"));
 
         systemTray.getMenu().add(new MenuItem("Show", e -> {
             setVisible(true);
