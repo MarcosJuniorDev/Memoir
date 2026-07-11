@@ -66,12 +66,18 @@ public class AddGame extends JDialog {
 
         RoundTextField txtGameExec = createFormField(formPanel, "Select Executable");
         dirChoose(txtGameExec, false);
+        txtGameExec.setToolTipText("<html><body style='width: 200px; font-size: 14px; padding: 5px;'>"
+                + "Select the game's executable in the game folder" + "</body></html>");
 
-        RoundTextField txtSaveFolder = createFormField(formPanel, "Save Folder");
+        RoundTextField txtSaveFolder = createFormField(formPanel, "Save Data Location");
         dirChoose(txtSaveFolder, true);
+        txtSaveFolder.setToolTipText("<html><body style='width: 200px; font-size: 14px; padding: 5px;'>"
+                + "Select the folder that contains the game's save files" + "</body></html>");
 
         RoundTextField txtBackupDir  = createFormField(formPanel, "Backup Location");
         dirChoose(txtBackupDir, true);
+        txtBackupDir.setToolTipText("<html><body style='width: 200px; font-size: 14px; padding: 5px;'>"
+                + "Select the folder where you want to save the backup" + "</body></html>");
 
         // Adiciona o formulário inteiro na segunda coluna do contentPanel
         contentPanel.add(formPanel, "growx, aligny top");

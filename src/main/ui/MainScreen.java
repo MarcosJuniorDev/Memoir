@@ -26,6 +26,11 @@ public class MainScreen extends JFrame {
     public MainScreen(){
         this.gameRepository = new GameRepository();
 
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+        UIManager.put("ToolTip.background", AppTheme.BG_MAIN.getColor());
+        UIManager.put("ToolTip.foreground", AppTheme.PRIMARY.getColor());
+        UIManager.put("Tooltip.border", BorderFactory.createLineBorder(AppTheme.PRIMARY.getColor()));
+
         //PAINEL DOS CARDS
         gridPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 20, 20));
         gridPanel.setBackground(AppTheme.BG_MAIN.getColor());
