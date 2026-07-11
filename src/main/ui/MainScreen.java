@@ -124,7 +124,17 @@ public class MainScreen extends JFrame {
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             return;
         }
-        systemTray.setImage(getClass().getResource("/icons/mIcon256.png"));
+        URL iconURL = getClass().getResource("/icons/mIcon256.png");
+        if(iconURL != null){
+            try {
+                java.awt.Image imageOriginal = javax.imageio.ImageIO.read(iconURL);
+                java.awt.Image iconTray = imageOriginal.getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+
+                systemTray.setImage(iconTray);
+            }catch (Exception e){
+                System.out.println("Erro ao dimensionar: " + e.getMessage());
+            }
+        }
 
         systemTray.getMenu().add(new MenuItem("Show", e -> {
             setVisible(true);
