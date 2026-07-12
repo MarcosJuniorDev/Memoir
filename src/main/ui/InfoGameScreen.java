@@ -28,6 +28,7 @@ public class InfoGameScreen extends JPanel {
     private AutoBackupService autoBackupService;
 
     //TODO TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
+    //MEU DEUS DO CEU ESSA CLASSE TA PIOR A CADA UPDATE
     //
 
 
@@ -430,7 +431,7 @@ public class InfoGameScreen extends JPanel {
                     // 1. Atualiza a tela
                     field.setText(selectedPath);
 
-                    // 2. MÁGICA: Atualiza o atributo certo dentro do objeto 'game'
+                    // 2. Atualiza o atributo certo dentro do objeto 'game'
                     updateGameField.accept(selectedPath);
 
                     // 3. Agora sim, salva o objeto atualizado no JSON!

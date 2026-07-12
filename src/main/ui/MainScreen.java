@@ -167,33 +167,99 @@ public class MainScreen extends JFrame {
 
     public void systemTraySetup()
     {
-        SystemTray systemTray = SystemTray.get();
+        /*  POR ALGUMA RAZÃO O SYSTEMTRAY NATIVO NÃO FUNCIONA NO KDE PLASMA 6.7 NOBARA
+            ENTÃO OPTEI POR UTILIZAR A FERRAMENTA DO DORKBOX QUE FUNCIONOU CORRETAMENTE
+            AE O DORKBOX NÃO FUNCIONOU NO WINDOWS 10 E O NATIVO FUNCIONOU...
+            ENTAO UTILIZEI OS DOIS METODOS, QUE VIROU ESSA ABERRACAO ABAIXO
 
-        if (systemTray == null) {
-            System.out.println("System Tray não suportado!");
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            return;
-        }
-        URL iconURL = getClass().getResource("/icons/mIcon256.png");
-        if(iconURL != null){
-            try {
-                java.awt.Image imageOriginal = javax.imageio.ImageIO.read(iconURL);
-                java.awt.Image iconTray = imageOriginal.getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+         */
+        String os = System.getProperty("os.name").toLowerCase();
 
-                systemTray.setImage(iconTray);
-            }catch (Exception e){
-                System.out.println("Erro ao dimensionar: " + e.getMessage());
+        if (os.contains("win")) {
+            //WINDOWS: USA AWT NATIVO DO JAVA
+            if (!java.awt.SystemTray.isSupported()) {
+                System.out.println("System Tray não suportado no Windows!");
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+                return;
             }
+
+            try {
+                java.awt.SystemTray nativeTray = java.awt.SystemTray.getSystemTray();
+                URL iconURL = getClass().getResource("/icons/mIcon256.png");
+
+                if (iconURL != null) {
+                    java.awt.Image imageOriginal = javax.imageio.ImageIO.read(iconURL);
+                    java.awt.Image iconTray = imageOriginal.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
+
+                    // Menu clássico do AWT
+                    java.awt.PopupMenu popupMenu = new java.awt.PopupMenu();
+
+                    java.awt.MenuItem showItem = new java.awt.MenuItem("Show");
+                    showItem.addActionListener(new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            SwingUtilities.invokeLater(() -> {
+                                setVisible(true);
+                                setExtendedState(JFrame.NORMAL);
+                                toFront();
+                            });
+                        }
+                    });
+
+                    java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
+                    exitItem.addActionListener(new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            System.exit(0);
+                        }
+                    });
+
+                    popupMenu.add(showItem);
+                    popupMenu.add(exitItem);
+
+                    java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(iconTray, "Memoir", popupMenu);
+                    trayIcon.setImageAutoSize(true);
+
+                    nativeTray.add(trayIcon);
+                    System.out.println("System Tray carregado via AWT Nativo (Windows).");
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao configurar Tray nativo no Windows: " + e.getMessage());
+            }
+
+        } else {
+            // LINUX/OUTROS: USA O DORKBOX
+            dorkbox.systemTray.SystemTray systemTray = dorkbox.systemTray.SystemTray.get();
+
+            if (systemTray == null) {
+                System.out.println("System Tray não suportado pelo Dorkbox!");
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+                return;
+            }
+
+            URL iconURL = getClass().getResource("/icons/mIcon256.png");
+            if (iconURL != null) {
+                systemTray.setImage(iconURL);
+            }
+
+            dorkbox.systemTray.Menu mainMenu = systemTray.getMenu();
+
+            mainMenu.add(new dorkbox.systemTray.MenuItem("Show", e -> SwingUtilities.invokeLater(() -> {
+                setVisible(true);
+                setExtendedState(JFrame.NORMAL);
+                toFront();
+                repaint();
+            })));
+
+            mainMenu.add(new dorkbox.systemTray.MenuItem("Exit", e -> {
+                if (systemTray != null) {
+                    systemTray.shutdown();
+                }
+                System.exit(0);
+            }));
+
+            System.out.println("System Tray carregado via Dorkbox (Linux).");
         }
-
-        systemTray.getMenu().add(new MenuItem("Show", e -> {
-            setVisible(true);
-            setExtendedState(JFrame.NORMAL);
-        }));
-
-        systemTray.getMenu().add(new MenuItem("Exit", e -> {
-            System.exit(0);
-        }));
 
     }
 
