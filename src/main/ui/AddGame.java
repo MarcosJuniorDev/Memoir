@@ -6,6 +6,8 @@ import main.service.SteamGridService;
 import main.ui.components.CoverPick;
 import main.ui.components.RoundTextField;
 import main.ui.theme.AppTheme;
+import net.harawata.appdirs.AppDirs;
+import net.harawata.appdirs.AppDirsFactory;
 import net.miginfocom.swing.MigLayout;
 import main.ui.components.RoundButton;
 
@@ -200,9 +202,10 @@ public class AddGame extends JDialog {
     }
 
     public String checkLocalCover(String gameName){
+        AppDirs appDirs = AppDirsFactory.getInstance();
         String formattedName = gameName.replace(" ", "-");
 
-        File folder = new File("data/covers");
+        File folder = new File(appDirs.getUserDataDir("Memoir", null, "Double Down"), "covers");
 
         if (folder.exists() && folder.isDirectory()){
             File[] files = folder.listFiles((dir, name) -> name.startsWith(formattedName + "."));

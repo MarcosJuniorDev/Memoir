@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import main.model.Game;
+import net.harawata.appdirs.AppDirs;
+import net.harawata.appdirs.AppDirsFactory;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -19,11 +21,21 @@ public class GameRepository {
             .setPrettyPrinting()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter().nullSafe()).create();
 
+    private File getJsonFile(){
+        AppDirs appDirs = AppDirsFactory.getInstance();
+        File directory = new File(appDirs.getUserDataDir("Memoir", null, "Double Down"));
+
+        if(!directory.exists()){
+            directory.mkdir();
+        }
+        return new File(directory,"gameData.json");
+    }
+
     public void saveAll(List<Game> GamesInfos){
         try {
             String GameDataJson = gson.toJson(GamesInfos);
 
-            FileWriter fw = new FileWriter("gameData.json");
+            FileWriter fw = new FileWriter(getJsonFile());
             fw.write(GameDataJson);
             fw.close();
 
@@ -34,7 +46,7 @@ public class GameRepository {
     }
 
     public List<Game> loadAll(){
-        try (FileReader fr = new FileReader("gameData.json")){
+        try (FileReader fr = new FileReader(getJsonFile())){
             return gson.fromJson(fr, new TypeToken<List<Game>>(){}.getType());
         } catch (FileNotFoundException e){
             return new ArrayList<>();

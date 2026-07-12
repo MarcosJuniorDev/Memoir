@@ -3,6 +3,8 @@ package main.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.harawata.appdirs.AppDirs;
+import net.harawata.appdirs.AppDirsFactory;
 
 import javax.swing.*;
 import java.io.InputStream;
@@ -106,7 +108,8 @@ public class SteamGridService {
     }
 
     private String coverDownload(String urlString, String fileName) throws Exception {
-        Path folderLocation = Paths.get("data", "covers");
+        AppDirs appDirs = AppDirsFactory.getInstance();
+        Path folderLocation = Paths.get(appDirs.getUserDataDir("Memoir", null, "Double Down"), "covers");
         try {
             Files.createDirectories(folderLocation);
         }catch (Exception e){
