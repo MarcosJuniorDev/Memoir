@@ -1,6 +1,8 @@
 package main.ui;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import main.model.Game;
+import main.service.AutoBackupService;
 import main.service.BackupService;
 import main.service.GameRepository;
 import main.ui.components.ResponsiveCover;
@@ -15,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -22,6 +25,7 @@ public class InfoGameScreen extends JPanel {
     private MainScreen mainScreen;
     private BackupService backupService;
     private Game game;
+    private AutoBackupService autoBackupService;
 
     //TODO TODA ESSA CLASSE ESTA HORRÍVEL COM REPETIÇÃO DE CÓDIGO VOU REFATORAR MAIS TARDE FODAS
     //
@@ -32,6 +36,12 @@ public class InfoGameScreen extends JPanel {
         this.mainScreen = mainScreen;
         this.game = game;
         this.backupService = new BackupService(game);
+        GameRepository gameRepository = new GameRepository();
+        String exeName = "";
+        if (game.getGamePath() != null && !game.getGamePath().isEmpty()) {
+            exeName = new File(game.getGamePath()).getName();
+        }
+        this.autoBackupService = new AutoBackupService(exeName, backupService);
 
         setLayout(new BorderLayout());
         setBackground(AppTheme.BG_MAIN.getColor());
@@ -81,6 +91,15 @@ public class InfoGameScreen extends JPanel {
         backupDate.setForeground(AppTheme.PRIMARY.getColor());
         backupDate.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
         leftPanel.add(backupDate, "center, cell 0 3");
+
+        Runnable updateUIDate = () -> {
+            backupDate.setText(game.getLastBackup());
+        };
+
+        AutoBackupService abs = mainScreen.getAutoBackupService(game.getName());
+        if (abs != null) {
+            abs.setOnBackupSuccess(updateUIDate);
+        }
 
         //RESTORE BACKUP
         RoundButton btnRestoreGameSave = new RoundButton("RESTORE BACKUP", AppTheme.PRIMARY, AppTheme.TEXT_BLACK, 15);
@@ -219,14 +238,42 @@ public class InfoGameScreen extends JPanel {
                     "Comment", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
             );
             if(awnser == JOptionPane.YES_OPTION){
-                GameRepository gameRepository = new GameRepository();
                 game.setComment(commentTxt.getText());
                 gameRepository.update(game);
             }
 
 
         });
-        rightPanel.add(btnSaveComment, "gaptop 10, right");
+
+        // BOTAO AUTO-BACKUP
+        JCheckBox btnAutoBackup = new JCheckBox();
+        btnAutoBackup.setOpaque(false);
+        btnAutoBackup.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAutoBackup.putClientProperty(FlatClientProperties.STYLE, "icon.scale: 1.5");
+        btnAutoBackup.setSelected(game.isAutoBackupEnabled());
+        btnAutoBackup.addItemListener(e -> {
+            boolean isChecked = btnAutoBackup.isSelected();
+             game.setAutoBackupEnabled(isChecked);
+             gameRepository.update(game);
+             if(isChecked){
+                 mainScreen.startAutoBackupForGame(game);
+
+                 AutoBackupService newAbs = mainScreen.getAutoBackupService(game.getName());
+                 if(newAbs != null){
+                     newAbs.setOnBackupSuccess(updateUIDate);
+                 }
+             }
+             else {
+                 mainScreen.stopAutoBackupForGame(game);
+             }
+        });
+        JLabel autoBkp = new JLabel("Auto backup: ");
+        autoBkp.setForeground(AppTheme.PRIMARY.getColor());
+        autoBkp.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 22));
+        rightPanel.add(autoBkp, "gaptop 10, split 3, left");
+        rightPanel.add(btnAutoBackup, "left, gapleft 5, gaptop 10");
+
+        rightPanel.add(btnSaveComment, "gapleft push");
 
         contentPanel.add(rightPanel, "grow, top, cell 1 0");
         panel.add(contentPanel, "grow, push");
@@ -245,7 +292,6 @@ public class InfoGameScreen extends JPanel {
         //DELETAR CADASTRO DO GAME
         RoundButton btnDeleteGame = new RoundButton("DELETE GAME", AppTheme.SECONDARY, AppTheme.TEXT_WHITE, 15);
         btnDeleteGame.addActionListener(e -> {
-            GameRepository gameRepository = new GameRepository();
             int awnser = JOptionPane.showConfirmDialog(
                     this, "Do you also want to delete the backup save file?",
                     "Backup Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE

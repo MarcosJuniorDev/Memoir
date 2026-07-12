@@ -72,6 +72,7 @@ public class BackupService {
     public boolean saveFilesBackup() throws Exception{
         String currentHash = verifyCurrentHash();
         if (isBackupNeeded(currentHash)) {
+            System.out.println("backup realizado");
             ensureBackupDirecotry();
             FileUtils.copyDirectory(Paths.get(game.getSaveGamePath()).toFile(), Paths.get(game.getBackupLocation(), game.getName()).toFile());
             game.setLastHash(currentHash);
@@ -79,6 +80,7 @@ public class BackupService {
             gameRepository.update(game);
             return true;
         }
+        System.out.println("backup skipado");
         return false;
     }
 

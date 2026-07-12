@@ -20,6 +20,7 @@ public class Game {
     private String coverPath;
     private String comment = "";
     private int rating;
+    private boolean autoBackupEnabled = false;
 
     public Game(String name, String gamePath, String saveGamePath, String lastHash, String backupLocation, String coverPath) {
         this.name = name;
@@ -29,6 +30,10 @@ public class Game {
         this.backupLocation = backupLocation;
         this.coverPath = coverPath;
     }
+
+    public boolean isAutoBackupEnabled() { return autoBackupEnabled; }
+
+    public void setAutoBackupEnabled(boolean autoBackupEnabled) { this.autoBackupEnabled = autoBackupEnabled; }
 
     public int getRating() {
         return rating;

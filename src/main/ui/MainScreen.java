@@ -3,6 +3,8 @@ package main.ui;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
 import main.model.Game;
+import main.service.AutoBackupService;
+import main.service.BackupService;
 import main.service.GameRepository;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
@@ -11,20 +13,26 @@ import main.ui.components.RoundButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import dorkbox.systemTray.*;
+import java.util.Map;
 
 public class MainScreen extends JFrame {
     private JPanel gridPanel;
     private GameRepository gameRepository;
+    private Map<String, AutoBackupService> activeBackupServices = new HashMap<>();
 
     //GUARDA A MAINSCREEN ORIGINAL
     private Container originalPanel;
 
     public MainScreen(){
         this.gameRepository = new GameRepository();
+
+        autoBackupsInit();
 
         ToolTipManager.sharedInstance().setInitialDelay(0);
         UIManager.put("ToolTip.background", AppTheme.BG_MAIN.getColor());
@@ -120,6 +128,43 @@ public class MainScreen extends JFrame {
         gridPanel.repaint();
     }
 
+    private void autoBackupsInit() {
+        List<Game> savedGames = gameRepository.loadAll();
+
+        for (Game game : savedGames) {
+            if (game.isAutoBackupEnabled()) {
+                startAutoBackupForGame(game);
+            }
+        }
+    }
+
+    public void startAutoBackupForGame(Game game) {
+        // Só inicia se já não tiver um rodando para esse jogo
+        if (!activeBackupServices.containsKey(game.getName())) {
+
+            String exeName = "";
+            if (game.getGamePath() != null && !game.getGamePath().isEmpty()) {
+                exeName = new File(game.getGamePath()).getName();
+            }
+
+            BackupService bkService = new BackupService(game);
+            AutoBackupService abs = new AutoBackupService(exeName, bkService);
+
+            abs.beginWatch();
+
+            // Guarda na lista de serviços ativos
+            activeBackupServices.put(game.getName(), abs);
+        }
+    }
+    public void stopAutoBackupForGame(Game game) {
+        // Tenta pegar o serviço na lista e remove ele
+        AutoBackupService abs = activeBackupServices.remove(game.getName());
+        if (abs != null) {
+            abs.stopWatch();
+        }
+    }
+
+
     public void systemTraySetup()
     {
         SystemTray systemTray = SystemTray.get();
@@ -150,6 +195,10 @@ public class MainScreen extends JFrame {
             System.exit(0);
         }));
 
+    }
+
+    public AutoBackupService getAutoBackupService(String gameName) {
+        return activeBackupServices.get(gameName);
     }
 
 

@@ -52,7 +52,7 @@ public class GameCard extends JPanel {
             g2d.drawImage(coverImage, 0, 0, getWidth(), getHeight() - 30, this);
             g2d.setClip(null);
         } else {
-            //g2d.setColor(Color.DARK_GRAY);
+            g2d.setColor(Color.DARK_GRAY);
             g2d.fill(molde);
             g2d.setColor(AppTheme.PRIMARY.getColor());
             g2d.setFont(new Font("SansSerif", Font.BOLD, 14));
