@@ -179,6 +179,7 @@ public class AddGame extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JFileChooser chooser = new JFileChooser();
+                chooser.setFileHidingEnabled(false);
                 if (isDirectory){
                     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     chooser.setDialogTitle("Select Folder");
