@@ -65,21 +65,21 @@ public class GameCard extends JPanel {
         g2d.setColor(AppTheme.PRIMARY.getColor());
         g2d.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 18));
 
-
+        FontMetrics fmOrbitron = g2d.getFontMetrics();
         //BORDA
         g2d.setStroke(new BasicStroke(2f));
         g2d.draw(molde);
 
         int maxWidth = getWidth() - 10;
 
-        if (fm.stringWidth(gameName) > maxWidth){
-            while (fm.stringWidth(gameName + "...") > maxWidth && !gameName.isEmpty()) {
+        if (fmOrbitron.stringWidth(gameName) > maxWidth){
+            while (fmOrbitron.stringWidth(gameName + "...") > maxWidth && !gameName.isEmpty()) {
                 gameName = gameName.substring(0, gameName.length() - 1);
             }
             gameName += "...";
         }
 
-        int xTexto = (getWidth() - fm.stringWidth(gameName)) / 2;
+        int xTexto = (getWidth() - fmOrbitron.stringWidth(gameName)) / 2;
         int yTexto = getHeight() - 12;
 
         g2d.drawString(gameName, xTexto, yTexto);
