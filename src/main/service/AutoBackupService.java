@@ -1,21 +1,23 @@
 package main.service;
 
+import main.model.Game;
+
 import javax.swing.*;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class AutoBackupService {
 
     private ScheduledExecutorService watcher;
     private final String gameExec;
-    private boolean isGameRunning;
-    BackupService bkService;
+    private volatile boolean isGameRunning;
+    private final BackupService bkService;
 
-    private Runnable onBackupSuccess;
+    private volatile Consumer<Game> onBackupSuccess;
 
 
     public AutoBackupService(String gameExec, BackupService bkService) {
@@ -24,8 +26,12 @@ public class AutoBackupService {
 
     }
 
-    public void setOnBackupSuccess(Runnable onBackupSuccess) {
+    public void setOnBackupSuccess(Consumer<Game> onBackupSuccess) {
         this.onBackupSuccess = onBackupSuccess;
+    }
+
+    public Game getGame() {
+        return bkService.getGame();
     }
 
     //COMECA MONITORAR O PROCESSO EM SEGUNDO PLANO
@@ -90,8 +96,10 @@ public class AutoBackupService {
                 try {
                     boolean backupDone = bkService.saveFilesBackup();
 
-                    if(onBackupSuccess != null){
-                        SwingUtilities.invokeLater(onBackupSuccess);
+                    Consumer<Game> callback = onBackupSuccess;
+                    if(backupDone && callback != null){
+                        Game updatedGame = bkService.getGame();
+                        SwingUtilities.invokeLater(() -> callback.accept(updatedGame));
                     }
                 } catch (Exception e) {
                     System.out.println("Erro ao salvar arquivo: " + e.getMessage());

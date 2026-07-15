@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +24,16 @@ import java.util.Map;
 
 public class MainScreen extends JFrame {
     private JPanel gridPanel;
-    private GameRepository gameRepository;
-    private Map<String, AutoBackupService> activeBackupServices = new HashMap<>();
+    private final GameRepository gameRepository;
+    private final List<Game> games;
+    private final Map<String, AutoBackupService> activeBackupServices = new HashMap<>();
 
     //GUARDA A MAINSCREEN ORIGINAL
     private Container originalPanel;
 
     public MainScreen(){
         this.gameRepository = new GameRepository();
+        this.games = gameRepository.loadAll();
 
         autoBackupsInit();
 
@@ -85,6 +88,7 @@ public class MainScreen extends JFrame {
             AddGame ad = new AddGame(MainScreen.this);
             ad.setModal(true);
             ad.setVisible(true);
+            addNewGamesFromRepository();
             loadgamesToGrid();
         });
 
@@ -110,7 +114,7 @@ public class MainScreen extends JFrame {
     public void loadgamesToGrid(){
         gridPanel.removeAll();
 
-        List<Game> savedGames = gameRepository.loadAll();
+        List<Game> savedGames = new ArrayList<>(games);
         //REVERTER A LISTA PARA OS CARD APARECER DA DIREITA PARA ESQUERDA
         Collections.reverse(savedGames);
         if (!savedGames.isEmpty()) {
@@ -129,11 +133,19 @@ public class MainScreen extends JFrame {
     }
 
     private void autoBackupsInit() {
-        List<Game> savedGames = gameRepository.loadAll();
-
-        for (Game game : savedGames) {
+        for (Game game : games) {
             if (game.isAutoBackupEnabled()) {
                 startAutoBackupForGame(game);
+            }
+        }
+    }
+
+    private void addNewGamesFromRepository() {
+        for (Game persistedGame : gameRepository.loadAll()) {
+            boolean alreadyLoaded = games.stream()
+                    .anyMatch(game -> game.getName().equals(persistedGame.getName()));
+            if (!alreadyLoaded) {
+                games.add(persistedGame);
             }
         }
     }
@@ -162,6 +174,11 @@ public class MainScreen extends JFrame {
         if (abs != null) {
             abs.stopWatch();
         }
+    }
+
+    public void removeGame(Game game) {
+        stopAutoBackupForGame(game);
+        games.removeIf(savedGame -> savedGame.getName().equals(game.getName()));
     }
 
 

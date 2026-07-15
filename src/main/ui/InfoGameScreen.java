@@ -17,7 +17,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -38,11 +37,7 @@ public class InfoGameScreen extends JPanel {
         this.game = game;
         this.backupService = new BackupService(game);
         GameRepository gameRepository = new GameRepository();
-        String exeName = "";
-        if (game.getGamePath() != null && !game.getGamePath().isEmpty()) {
-            exeName = new File(game.getGamePath()).getName();
-        }
-        this.autoBackupService = new AutoBackupService(exeName, backupService);
+        this.autoBackupService = mainScreen.getAutoBackupService(game.getName());
 
         setLayout(new BorderLayout());
         setBackground(AppTheme.BG_MAIN.getColor());
@@ -93,13 +88,13 @@ public class InfoGameScreen extends JPanel {
         backupDate.setFont(FontUtils.importFont("/fonts/Orbitron-VariableFont_wght.ttf", 20));
         leftPanel.add(backupDate, "center, cell 0 3");
 
-        Runnable updateUIDate = () -> {
-            backupDate.setText(game.getLastBackup());
+        Consumer<Game> updateUIDate = updatedGame -> {
+            this.game = updatedGame;
+            backupDate.setText(updatedGame.getLastBackup());
         };
 
-        AutoBackupService abs = mainScreen.getAutoBackupService(game.getName());
-        if (abs != null) {
-            abs.setOnBackupSuccess(updateUIDate);
+        if (autoBackupService != null) {
+            autoBackupService.setOnBackupSuccess(updateUIDate);
         }
 
         //RESTORE BACKUP
@@ -259,13 +254,15 @@ public class InfoGameScreen extends JPanel {
              if(isChecked){
                  mainScreen.startAutoBackupForGame(game);
 
-                 AutoBackupService newAbs = mainScreen.getAutoBackupService(game.getName());
-                 if(newAbs != null){
-                     newAbs.setOnBackupSuccess(updateUIDate);
+                 autoBackupService = mainScreen.getAutoBackupService(game.getName());
+                 if(autoBackupService != null){
+                     autoBackupService.setOnBackupSuccess(updateUIDate);
                  }
              }
              else {
+                 clearAutoBackupCallback();
                  mainScreen.stopAutoBackupForGame(game);
+                 autoBackupService = null;
              }
         });
         JLabel autoBkp = new JLabel("Auto backup: ");
@@ -321,7 +318,10 @@ public class InfoGameScreen extends JPanel {
 
         panel.add(footerPanel, "dock south");
 
-        btnCancel.addActionListener(e -> mainScreen.restoreMainScreenState());
+        btnCancel.addActionListener(e -> {
+            clearAutoBackupCallback();
+            mainScreen.restoreMainScreenState();
+        });
 
         //
 
@@ -393,7 +393,9 @@ public class InfoGameScreen extends JPanel {
 
     private void deleteGameProfile(String gameName, GameRepository gameRepository){
         try {
+            clearAutoBackupCallback();
             gameRepository.deleteGame(gameName);
+            mainScreen.removeGame(game);
             JOptionPane.showMessageDialog(this,
                     "Game Profile deleted!",
                     "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -403,6 +405,12 @@ public class InfoGameScreen extends JPanel {
                     this, "Failed to delete game profile:\n" + ex.getMessage(),
                     "Delete Error", JOptionPane.INFORMATION_MESSAGE
             );
+        }
+    }
+
+    private void clearAutoBackupCallback() {
+        if (autoBackupService != null) {
+            autoBackupService.setOnBackupSuccess(null);
         }
     }
 
