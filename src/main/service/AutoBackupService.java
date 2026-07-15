@@ -35,7 +35,7 @@ public class AutoBackupService {
 
         System.out.println("Busca pelo exec do game: " + gameExec);
 
-        watcher.scheduleAtFixedRate(this::searchGameProcess, 0, 10, TimeUnit.SECONDS);
+        watcher.scheduleAtFixedRate(this::searchGameProcess, 0, 3, TimeUnit.MINUTES);
 
     }
 
