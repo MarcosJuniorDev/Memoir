@@ -8,6 +8,7 @@ import main.service.BackupService;
 import main.service.GameRepository;
 import main.ui.theme.AppTheme;
 import net.miginfocom.swing.MigLayout;
+import main.ui.components.ResponsiveFlowPanel;
 import main.ui.components.RoundButton;
 
 import javax.swing.*;
@@ -43,7 +44,7 @@ public class MainScreen extends JFrame {
         UIManager.put("Tooltip.border", BorderFactory.createLineBorder(AppTheme.PRIMARY.getColor()));
 
         //PAINEL DOS CARDS
-        gridPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 20, 20));
+        gridPanel = new ResponsiveFlowPanel(FlowLayout.LEADING, 20, 20);
         gridPanel.setBackground(AppTheme.BG_MAIN.getColor());
         //ICON
         URL iconURL = getClass().getResource("/icons/mIcon256.png");
@@ -58,7 +59,9 @@ public class MainScreen extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(gridPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(AppTheme.BG_MAIN.getColor());
         add(scrollPane, BorderLayout.CENTER);
 
 
