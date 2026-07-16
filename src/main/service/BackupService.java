@@ -39,6 +39,7 @@ public class BackupService {
     }
 
     public void setGameRepository(GameRepository gameRepository) {
+
         this.gameRepository = gameRepository;
     }
 
@@ -56,6 +57,9 @@ public class BackupService {
     public String verifyCurrentHash() throws NoSuchAlgorithmException{
         return hashFileSave.SaveFileHash(Paths.get(game.getSaveGamePath()));
     }
+    public String verifyHashBackupFolder() throws NoSuchAlgorithmException{
+        return hashFileSave.SaveFileHash(Paths.get(game.getBackupLocation(),  game.getName()));
+    }
 
     public boolean isBackupNeeded(String currentHash){
         if (!Files.exists(Paths.get(game.getBackupLocation(), game.getName()))){
@@ -66,6 +70,7 @@ public class BackupService {
     }
 
     public boolean gameBackupFolderExist(){
+
         return Files.exists(Paths.get(game.getBackupLocation(), game.getName()));
     }
 

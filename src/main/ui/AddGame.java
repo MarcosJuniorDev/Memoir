@@ -1,6 +1,7 @@
 package main.ui;
 
 import main.model.Game;
+import main.service.BackupService;
 import main.service.GameRepository;
 import main.service.SteamGridService;
 import main.ui.components.CoverPick;
@@ -16,6 +17,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,13 +124,42 @@ public class AddGame extends JDialog {
         for (Game g : savedGames){
             if(g.getName().equalsIgnoreCase(gameTitle)){
                 JOptionPane.showMessageDialog(this,
-                        "A game with the anem '" + gameTitle + "' is already registered!",
+                        "A game with the name: '" + gameTitle + "' is already registered!",
                         "Duplicate Game",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
         Game newGame = new Game(gameTitle, gameExec, saveFolder, null, backupDir, savedCoverPath);
+        BackupService backupService = new BackupService(newGame);
+        if (backupService.gameBackupFolderExist()){
+            int awnser = JOptionPane.showConfirmDialog(this,
+                    "Backup file for this Game found! Do you want to use this backup?",
+                    "Backup Found", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            try {
+                if (awnser == JOptionPane.YES_OPTION){
+
+                        String backupHash = backupService.verifyHashBackupFolder();
+                        newGame.setLastHash(backupHash);
+                        newGame.setLastBackup();
+                }
+                else if (awnser == JOptionPane.NO_OPTION) {
+                    int awnser2 = JOptionPane.showConfirmDialog(this,
+                            "Do you want to Delete the backup folder found?",
+                            "Delete Folder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    if (awnser2 == JOptionPane.YES_OPTION){
+                        backupService.deleteBackupFile(newGame.getBackupLocation(), newGame.getName());
+                    }
+                }
+            }catch (NoSuchAlgorithmException e) {
+                JOptionPane.showMessageDialog(this, "Erro: "+ e.getMessage(),
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            }catch (IOException ex){
+                JOptionPane.showMessageDialog(this, "Erro: "+ ex.getMessage(),
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
 
         savedGames.add(newGame);
         gameRepository.saveAll(savedGames);
