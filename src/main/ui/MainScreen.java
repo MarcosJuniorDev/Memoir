@@ -1,7 +1,5 @@
 package main.ui;
 
-import dorkbox.systemTray.MenuItem;
-import dorkbox.systemTray.SystemTray;
 import main.model.Game;
 import main.service.AutoBackupService;
 import main.service.BackupService;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import dorkbox.systemTray.*;
 import java.util.Map;
 
 public class MainScreen extends JFrame {
@@ -216,46 +213,51 @@ public class MainScreen extends JFrame {
             try {
                 nativeTray = java.awt.SystemTray.getSystemTray();
                 URL iconURL = getClass().getResource("/icons/mIcon256.png");
-
-                if (iconURL != null) {
-                    java.awt.Image imageOriginal = javax.imageio.ImageIO.read(iconURL);
-                    java.awt.Image iconTray = imageOriginal.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
-
-                    // Menu clássico do AWT
-                    java.awt.PopupMenu popupMenu = new java.awt.PopupMenu();
-
-                    java.awt.MenuItem showItem = new java.awt.MenuItem("Show");
-                    showItem.addActionListener(new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            SwingUtilities.invokeLater(() -> {
-                                setVisible(true);
-                                setExtendedState(JFrame.NORMAL);
-                                toFront();
-                            });
-                        }
-                    });
-
-                    java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
-                    exitItem.addActionListener(new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            System.exit(0);
-                        }
-                    });
-
-                    popupMenu.add(showItem);
-                    popupMenu.add(exitItem);
-
-                    nativeTrayIcon = new java.awt.TrayIcon(iconTray, "Memoir", popupMenu);
-                    nativeTrayIcon.setImageAutoSize(true);
-
-                    nativeTray.add(nativeTrayIcon);
-                    trayInitialized = true;
-                    System.out.println("System Tray carregado via AWT Nativo (Windows).");
+                if(iconURL == null){
+                    System.out.println("Icon of tray not found");
+                    setDefaultCloseOperation(EXIT_ON_CLOSE);
+                    return;
                 }
+
+                java.awt.Image imageOriginal = javax.imageio.ImageIO.read(iconURL);
+                java.awt.Image iconTray = imageOriginal.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
+
+                // Menu clássico do AWT
+                java.awt.PopupMenu popupMenu = new java.awt.PopupMenu();
+
+                java.awt.MenuItem showItem = new java.awt.MenuItem("Show");
+                showItem.addActionListener(new java.awt.event.ActionListener() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        SwingUtilities.invokeLater(() -> {
+                            setVisible(true);
+                            setExtendedState(JFrame.NORMAL);
+                            toFront();
+                        });
+                    }
+                });
+
+                java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
+                exitItem.addActionListener(new java.awt.event.ActionListener() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+
+                popupMenu.add(showItem);
+                popupMenu.add(exitItem);
+
+                nativeTrayIcon = new java.awt.TrayIcon(iconTray, "Memoir", popupMenu);
+                nativeTrayIcon.setImageAutoSize(true);
+
+                nativeTray.add(nativeTrayIcon);
+                setDefaultCloseOperation(HIDE_ON_CLOSE);
+                trayInitialized = true;
+                System.out.println("System Tray carregado via AWT Nativo (Windows).");
             } catch (Exception e) {
                 System.out.println("Erro ao configurar Tray nativo no Windows: " + e.getMessage());
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
             }
 
         } else {
@@ -269,9 +271,12 @@ public class MainScreen extends JFrame {
             }
 
             URL iconURL = getClass().getResource("/icons/mIcon256.png");
-            if (iconURL != null) {
-                dorkboxTray.setImage(iconURL);
+            if(iconURL == null){
+                System.out.println("Icon of tray not found");
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+                return;
             }
+            dorkboxTray.setImage(iconURL);
 
             dorkbox.systemTray.Menu mainMenu = dorkboxTray.getMenu();
 
@@ -279,7 +284,6 @@ public class MainScreen extends JFrame {
                 setVisible(true);
                 setExtendedState(JFrame.NORMAL);
                 toFront();
-                repaint();
             })));
 
             mainMenu.add(new dorkbox.systemTray.MenuItem("Exit", e -> {
@@ -288,6 +292,7 @@ public class MainScreen extends JFrame {
                 }
                 System.exit(0);
             }));
+            setDefaultCloseOperation(HIDE_ON_CLOSE);
             trayInitialized = true;
 
             System.out.println("System Tray carregado via Dorkbox (Linux).");
