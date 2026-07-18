@@ -145,6 +145,12 @@ src/main/resources/                       Icons, fonts, and manifest
 - Auto backup searches for the configured executable in the process command or command line, which helps with Linux, Proton, and Wine scenarios.
 - The build uses `maven-assembly-plugin` to package a single JAR with dependencies.
 
+## License
+
+Memoir is licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for details.
+
+Third-party dependencies keep their own licenses.
+
 ## Roadmap
 
 - Cloud backup.
