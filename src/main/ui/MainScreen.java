@@ -29,6 +29,11 @@ public class MainScreen extends JFrame {
     private final List<Game> games;
     private final Map<String, AutoBackupService> activeBackupServices = new HashMap<>();
 
+    private boolean trayInitialized;
+    private dorkbox.systemTray.SystemTray dorkboxTray;
+    private java.awt.SystemTray nativeTray;
+    private java.awt.TrayIcon nativeTrayIcon;
+
     //GUARDA A MAINSCREEN ORIGINAL
     private Container originalPanel;
 
@@ -193,6 +198,11 @@ public class MainScreen extends JFrame {
             ENTAO UTILIZEI OS DOIS METODOS, QUE VIROU ESSA ABERRACAO ABAIXO
 
          */
+        if(trayInitialized){
+            return;
+        }
+
+
         String os = System.getProperty("os.name").toLowerCase();
 
         if (os.contains("win")) {
@@ -204,7 +214,7 @@ public class MainScreen extends JFrame {
             }
 
             try {
-                java.awt.SystemTray nativeTray = java.awt.SystemTray.getSystemTray();
+                nativeTray = java.awt.SystemTray.getSystemTray();
                 URL iconURL = getClass().getResource("/icons/mIcon256.png");
 
                 if (iconURL != null) {
@@ -237,10 +247,11 @@ public class MainScreen extends JFrame {
                     popupMenu.add(showItem);
                     popupMenu.add(exitItem);
 
-                    java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(iconTray, "Memoir", popupMenu);
-                    trayIcon.setImageAutoSize(true);
+                    nativeTrayIcon = new java.awt.TrayIcon(iconTray, "Memoir", popupMenu);
+                    nativeTrayIcon.setImageAutoSize(true);
 
-                    nativeTray.add(trayIcon);
+                    nativeTray.add(nativeTrayIcon);
+                    trayInitialized = true;
                     System.out.println("System Tray carregado via AWT Nativo (Windows).");
                 }
             } catch (Exception e) {
@@ -249,9 +260,9 @@ public class MainScreen extends JFrame {
 
         } else {
             // LINUX/OUTROS: USA O DORKBOX
-            dorkbox.systemTray.SystemTray systemTray = dorkbox.systemTray.SystemTray.get();
+            dorkboxTray = dorkbox.systemTray.SystemTray.get();
 
-            if (systemTray == null) {
+            if (dorkboxTray == null) {
                 System.out.println("System Tray não suportado pelo Dorkbox!");
                 setDefaultCloseOperation(EXIT_ON_CLOSE);
                 return;
@@ -259,10 +270,10 @@ public class MainScreen extends JFrame {
 
             URL iconURL = getClass().getResource("/icons/mIcon256.png");
             if (iconURL != null) {
-                systemTray.setImage(iconURL);
+                dorkboxTray.setImage(iconURL);
             }
 
-            dorkbox.systemTray.Menu mainMenu = systemTray.getMenu();
+            dorkbox.systemTray.Menu mainMenu = dorkboxTray.getMenu();
 
             mainMenu.add(new dorkbox.systemTray.MenuItem("Show", e -> SwingUtilities.invokeLater(() -> {
                 setVisible(true);
@@ -272,15 +283,15 @@ public class MainScreen extends JFrame {
             })));
 
             mainMenu.add(new dorkbox.systemTray.MenuItem("Exit", e -> {
-                if (systemTray != null) {
-                    systemTray.shutdown();
+                if (dorkboxTray != null) {
+                    dorkboxTray.shutdown();
                 }
                 System.exit(0);
             }));
+            trayInitialized = true;
 
             System.out.println("System Tray carregado via Dorkbox (Linux).");
         }
-
     }
 
     public AutoBackupService getAutoBackupService(String gameName) {
