@@ -1,0 +1,167 @@
+name: Build installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+env:
+  APP_NAME: Memoir
+  APP_VERSION: "1.0"
+  APP_VENDOR: Double Down
+  JAR_NAME: memoir-1.0-jar-with-dependencies.jar
+
+jobs:
+  linux:
+    name: Linux (DEB and RPM)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Install native packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes fakeroot rpm
+
+      - name: Build executable JAR
+        run: mvn --batch-mode --no-transfer-progress clean package
+
+      - name: Prepare jpackage input
+        run: |
+          mkdir -p build/jpackage-input dist
+          cp "target/${JAR_NAME}" build/jpackage-input/
+
+      - name: Build RPM
+        run: |
+          jpackage \
+            --type rpm \
+            --input build/jpackage-input \
+            --dest dist \
+            --name "${APP_NAME}" \
+            --app-version "${APP_VERSION}" \
+            --vendor "${APP_VENDOR}" \
+            --description "Game library and local save backup manager" \
+            --license-file LICENSE \
+            --main-jar "${JAR_NAME}" \
+            --main-class main.App \
+            --icon src/main/resources/icons/mIcon256.png \
+            --linux-package-name memoir \
+            --linux-app-release 1 \
+            --linux-app-category Utility \
+            --linux-rpm-license-type GPL-3.0-only \
+            --linux-shortcut
+
+      - name: Build DEB
+        run: |
+          jpackage \
+            --type deb \
+            --input build/jpackage-input \
+            --dest dist \
+            --name "${APP_NAME}" \
+            --app-version "${APP_VERSION}" \
+            --vendor "${APP_VENDOR}" \
+            --description "Game library and local save backup manager" \
+            --license-file LICENSE \
+            --main-jar "${JAR_NAME}" \
+            --main-class main.App \
+            --icon src/main/resources/icons/mIcon256.png \
+            --linux-package-name memoir \
+            --linux-app-release 1 \
+            --linux-app-category Utility \
+            --linux-deb-maintainer marcosjoliveiradev@gmail.com \
+            --linux-shortcut
+
+      - name: Upload Linux installers
+        uses: actions/upload-artifact@v7
+        with:
+          name: memoir-linux-${{ env.APP_VERSION }}
+          path: |
+            dist/*.deb
+            dist/*.rpm
+          if-no-files-found: error
+
+  windows:
+    name: Windows (EXE)
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Set up WiX Toolset 3.11.2
+        shell: pwsh
+        run: |
+          $wixArchive = Join-Path $env:RUNNER_TEMP "wix311-binaries.zip"
+          $wixDirectory = Join-Path $env:RUNNER_TEMP "wix311"
+          Invoke-WebRequest `
+            -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip" `
+            -OutFile $wixArchive
+          Expand-Archive -Path $wixArchive -DestinationPath $wixDirectory
+          $wixDirectory | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build executable JAR
+        run: mvn --batch-mode --no-transfer-progress clean package
+
+      - name: Prepare jpackage input
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build/jpackage-input, dist
+          Copy-Item "target/$env:JAR_NAME" build/jpackage-input/
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          $jpackageArguments = @(
+            "--type", "exe",
+            "--input", "build/jpackage-input",
+            "--dest", "dist",
+            "--name", $env:APP_NAME,
+            "--app-version", $env:APP_VERSION,
+            "--vendor", $env:APP_VENDOR,
+            "--description", "Game library and local save backup manager",
+            "--license-file", "LICENSE",
+            "--main-jar", $env:JAR_NAME,
+            "--main-class", "main.App",
+            "--win-dir-chooser",
+            "--win-menu",
+            "--win-menu-group", $env:APP_NAME,
+            "--win-shortcut",
+            # Keep this UUID unchanged so future installers upgrade the existing installation.
+            "--win-upgrade-uuid", "eef99b08-e085-4d5f-a716-fe99df4e2d4d"
+          )
+
+          $windowsIcon = "packaging/icons/mIcon256.ico"
+          if (Test-Path $windowsIcon) {
+            $jpackageArguments += @("--icon", $windowsIcon)
+          } else {
+            Write-Warning "No Windows icon found at $windowsIcon; jpackage will use its default icon."
+          }
+
+          jpackage @jpackageArguments
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: memoir-windows-${{ env.APP_VERSION }}
+          path: dist/*.exe
+          if-no-files-found: error

@@ -42,7 +42,7 @@ Na restauração, o Memoir copia os arquivos da pasta de backup de volta para a 
 - Maven 3.9 ou superior.
 - Ambiente desktop com suporte a Swing.
 
-O `pom.xml` está configurado com `source` e `target` em Java 25. Se estiver usando outra versão do JDK, ajuste o `maven-compiler-plugin` antes de buildar.
+O `pom.xml` está configurado com o `release` do Java definido como 25. Se estiver usando outra versão do JDK, ajuste a propriedade `maven.compiler.release` antes de buildar.
 
 ## Build
 
@@ -55,7 +55,7 @@ mvn clean package
 O Maven gera um JAR executável com dependências em:
 
 ```text
-target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
+target/memoir-1.0-jar-with-dependencies.jar
 ```
 
 ## Executando
@@ -63,7 +63,7 @@ target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
 Depois do build:
 
 ```bash
-java -jar target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/memoir-1.0-jar-with-dependencies.jar
 ```
 
 Também é possível executar pela IDE usando a classe principal:

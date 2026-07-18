@@ -42,7 +42,7 @@ When restoring, Memoir copies the files from the backup folder back to the game'
 - Maven 3.9 or later.
 - Desktop environment with Swing support.
 
-The `pom.xml` is configured with Java `source` and `target` set to 25. If you are using another JDK version, adjust the `maven-compiler-plugin` before building.
+The `pom.xml` is configured with Java `release` set to 25. If you are using another JDK version, adjust the `maven.compiler.release` property before building.
 
 ## Build
 
@@ -55,7 +55,7 @@ mvn clean package
 Maven generates an executable JAR with dependencies at:
 
 ```text
-target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
+target/memoir-1.0-jar-with-dependencies.jar
 ```
 
 ## Running
@@ -63,7 +63,7 @@ target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
 After building:
 
 ```bash
-java -jar target/memoir-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/memoir-1.0-jar-with-dependencies.jar
 ```
 
 You can also run it from the IDE using the main class:
